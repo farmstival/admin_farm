@@ -33,6 +33,13 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
 	implementation 'org.modelmapper:modelmapper:3.2.1'
 
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testRuntimeOnly 'com.h2database:h2'
