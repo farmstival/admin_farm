@@ -21,6 +21,8 @@ public class QFileInfo extends EntityPathBase<FileInfo> {
 
     public final com.joyfarm.farmstival.global.entities.QBaseMemberEntity _super = new com.joyfarm.farmstival.global.entities.QBaseMemberEntity(this);
 
+    public final StringPath contentType = createString("contentType");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -29,6 +31,20 @@ public class QFileInfo extends EntityPathBase<FileInfo> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
+
+    public final BooleanPath done = createBoolean("done");
+
+    public final StringPath extension = createString("extension");
+
+    public final StringPath fileName = createString("fileName");
+
+    public final StringPath filePath = createString("filePath");
+
+    public final StringPath fileUrl = createString("fileUrl");
+
+    public final StringPath gid = createString("gid");
+
+    public final StringPath location = createString("location");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedAt = _super.modifiedAt;
