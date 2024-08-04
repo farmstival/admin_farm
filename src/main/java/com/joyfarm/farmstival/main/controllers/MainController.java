@@ -1,4 +1,4 @@
-package com.joyfarm.farmstival.global.main.controllers;
+package com.joyfarm.farmstival.main.controllers;
 
 
 import com.joyfarm.farmstival.global.exceptions.ExceptionProcessor;
