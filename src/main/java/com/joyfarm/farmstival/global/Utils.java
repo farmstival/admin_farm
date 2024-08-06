@@ -2,6 +2,8 @@ package com.joyfarm.farmstival.global;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -17,8 +19,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Utils { // 빈의 이름 - utils
 
+    private final DiscoveryClient discoveryClient;
     private final MessageSource messageSource;
     private final HttpServletRequest request;
+
+    public String url(String url) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("admin-service");
+
+        return String.format("%s%s", instances.get(0).getUri().toString(), url);
+        // 각 서버에서 지원하는 정적 자원의 경로는 게이트웨이 쪽에서 접근하는 것이 바람직 하지 않다!
+    }
 
     public String toUpper(String str) {
         return str.toUpperCase();
