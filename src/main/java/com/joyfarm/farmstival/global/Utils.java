@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Utils { // 빈의 이름 - utils
 
+    private final DiscoveryClient discoveryClient;
     private final MessageSource messageSource;
     private final HttpServletRequest request;
     private final DiscoveryClient discoveryClient;
@@ -44,6 +45,13 @@ public class Utils { // 빈의 이름 - utils
     }
 
      */
+
+    public String url(String url) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("admin-service");
+
+        return String.format("%s%s", instances.get(0).getUri().toString(), url);
+        // 각 서버에서 지원하는 정적 자원의 경로는 게이트웨이 쪽에서 접근하는 것이 바람직 하지 않다!
+    }
 
     public String toUpper(String str) {
         return str.toUpperCase();
