@@ -30,7 +30,7 @@ public class MemberController implements ExceptionProcessor {
     @GetMapping("/join")
     public String join(@ModelAttribute RequestJoin form) {
 
-        return "front/member/join";
+        return "member/join";
     }
 
     @PostMapping("/join")
@@ -39,7 +39,7 @@ public class MemberController implements ExceptionProcessor {
         joinValidator.validate(form, errors);
 
         if (errors.hasErrors()) {
-            return "front/member/join";
+            return "member/join";
         }
 
         memberSaveService.save(form); // 회원 가입 처리
@@ -59,7 +59,7 @@ public class MemberController implements ExceptionProcessor {
             }
         }
 
-        return "front/member/login";
+        return "member/login";
     }
 
 }
