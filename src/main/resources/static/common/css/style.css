@@ -1,0 +1,10 @@
+.dn {
+    display: none !important;
+}  /*히든 프레임 보이지 않게 함*/
+
+root {
+    --pastel_blue: #B2CCFF;
+    --pastel_purple: #C7C4FF;
+    --yellow: #FFE08C;
+    --pink: #EDA0C7;
+}
