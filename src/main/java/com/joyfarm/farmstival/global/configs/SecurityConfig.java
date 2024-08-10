@@ -27,33 +27,28 @@ public class SecurityConfig {
             f.loginPage("/member/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .successHandler(new LoginSuccessHandler())
-                    .failureHandler(new LoginFailureHandler());
+                    .successHandler(new LoginSuccessHandler()) //로그인 성공시 유입
+                    .failureHandler(new LoginFailureHandler()); //로그인 실패시 유입
         });
 
 
         http.logout(f -> {
             f.logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-                    .logoutSuccessUrl("/member/login");
+                    .logoutSuccessUrl("/member/login"); //로그아웃 성공시 이동할 주소
 
         });
         /* 로그인, 로그아웃 E */
 
         /* 인가(접근 통제) 설정 S */
         http.authorizeHttpRequests(c -> {
-            /*
-            c.requestMatchers("/member/**").anonymous()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                    .anyRequest().authenticated();
-            */
-            c.requestMatchers("/mypage/**").authenticated() // 회원 전용
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+            c.requestMatchers("/member/**").permitAll()
                     .anyRequest().permitAll();
         });
 
+        //AuthenticationEntryPoint: 인증이 필요한 리소스에 접근할 때, 인증되지 않은 사용자에게 어떻게 응답할지 결정
         http.exceptionHandling(c -> {
             c.authenticationEntryPoint(new MemberAuthenticationEntryPoint()).accessDeniedHandler((req, res, e) -> {
-                res.sendError(HttpStatus.UNAUTHORIZED.value());
+                res.sendError(HttpStatus.UNAUTHORIZED.value()); //인증된 상태에서도 권한이 부족하여 접근이 거부되었을 경우
             });
         });
         /* 인가(접근 통제) 설정 E */

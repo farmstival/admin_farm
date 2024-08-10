@@ -13,10 +13,11 @@ public class FileConfig implements WebMvcConfigurer {
 
    private final FileProperties properties;
 
+   /* 특정 요청에 대한 정적 리소스 처리 핸들러 */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(properties.getUrl() + "**")
-                .addResourceLocations("file:///" + properties.getPath());
+        registry.addResourceHandler(properties.getUrl() + "**") //upload/**
+                .addResourceLocations("file:///" + properties.getPath()); // file.path 환경변수로 지정
 
     }
 }
