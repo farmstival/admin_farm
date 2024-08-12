@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.io.Serializable;
 
 @Data
-@RedisHash(timeToLive = 36000L)
+@RedisHash(timeToLive = 100000L)
 public class JwtToken implements Serializable {
     @Id
     private String sessionId; // 세션 ID

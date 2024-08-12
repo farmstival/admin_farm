@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<aside th:fragment="menus">
+<aside th:fragment="menus"><!--사이드 바 정의-->
     <a th:href="${@utils.redirectUrl('/config')}" th:classappend="${menuCode} == 'config' ? 'on'">
         <i class="xi-cog"></i> 기본설정
     </a>
