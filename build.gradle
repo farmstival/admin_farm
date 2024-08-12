@@ -45,12 +45,9 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
 	implementation 'org.modelmapper:modelmapper:3.2.1'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
-
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -73,16 +70,21 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+def querydslDir = file("build/generated/querydsl")
 
 sourceSets {
-	main.java.srcDirs += [ querydslDir ]
+	main {
+		java {
+			srcDirs += [querydslDir]
+		}
+	}
 }
 
 tasks.withType(JavaCompile) {
-	options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+	options.annotationProcessorPath = configurations.annotationProcessor
+	options.generatedSourceOutputDirectory.set(querydslDir)
 }
 
 clean.doLast {
-	file(querydslDir).deleteDir()
+	delete querydslDir
 }
