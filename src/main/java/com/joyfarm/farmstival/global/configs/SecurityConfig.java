@@ -1,66 +1,46 @@
 package com.joyfarm.farmstival.global.configs;
 
 
-import com.joyfarm.farmstival.member.services.LoginFailureHandler;
-import com.joyfarm.farmstival.member.services.LoginSuccessHandler;
-import com.joyfarm.farmstival.member.services.MemberAuthenticationEntryPoint;
+import com.joyfarm.farmstival.global.Utils;
+import com.joyfarm.farmstival.global.filters.LoginFilter;
+import com.joyfarm.farmstival.member.repositories.JwtTokenRepository;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final LoginFilter loginFilter;
+    private final JwtTokenRepository jwtTokenRepository;
+    private final Utils utils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        /* 로그인, 로그아웃 S */
-        http.formLogin(f -> {
-            f.loginPage("/member/login")
-                    .usernameParameter("email")
-                    .passwordParameter("password")
-                    .successHandler(new LoginSuccessHandler())
-                    .failureHandler(new LoginFailureHandler());
+        http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(c -> {
+                    c.requestMatchers("/js/**", "/css/**", "/images/**", "/logout").permitAll()
+                            .anyRequest().hasAnyAuthority("ADMIN");
+                });
+
+        http.logout(c -> {
+            c.logoutUrl("/logout")
+                    .logoutSuccessHandler((req, res, a) -> {
+                        HttpSession session = req.getSession();
+                        jwtTokenRepository.deleteById(session.getId());
+
+                        res.sendRedirect(utils.redirectUrl("/"));
+                    });
         });
 
-
-        http.logout(f -> {
-            f.logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-                    .logoutSuccessUrl("/member/login");
-
-        });
-        /* 로그인, 로그아웃 E */
-
-        /* 인가(접근 통제) 설정 S */
-        http.authorizeHttpRequests(c -> {
-            /*
-            c.requestMatchers("/member/**").anonymous()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                    .anyRequest().authenticated();
-            */
-            c.requestMatchers("/mypage/**").authenticated() // 회원 전용
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                    .anyRequest().permitAll();
-        });
-
-        http.exceptionHandling(c -> {
-            c.authenticationEntryPoint(new MemberAuthenticationEntryPoint()).accessDeniedHandler((req, res, e) -> {
-                res.sendError(HttpStatus.UNAUTHORIZED.value());
-            });
-        });
-        /* 인가(접근 통제) 설정 E */
-
-
-        // iframe 자원 출처를 같은 서버 자원으로 한정
-        http.headers(c -> c.frameOptions(f -> f.sameOrigin()));
+        http.headers(h -> h.frameOptions(f -> f.sameOrigin()));
 
         return http.build();
     }

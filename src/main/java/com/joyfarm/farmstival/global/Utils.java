@@ -13,28 +13,37 @@ import org.springframework.validation.FieldError;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class Utils { // 빈의 이름 - utils
 
-    private final DiscoveryClient discoveryClient;
     private final MessageSource messageSource;
     private final HttpServletRequest request;
+    private final DiscoveryClient discoveryClient;
 
     public String url(String url) {
         List<ServiceInstance> instances = discoveryClient.getInstances("admin-service");
 
-        return String.format("%s%s", instances.get(0).getUri().toString(), url);
-        // 각 서버에서 지원하는 정적 자원의 경로는 게이트웨이 쪽에서 접근하는 것이 바람직 하지 않다!
+        try{
+            return String.format("%s%s", instances.get(0).getUri().toString(), url);
+            // 각 서버에서 지원하는 정적 자원의 경로는 게이트웨이 쪽에서 접근하는 것이 바람직 하지 않다!
+        }catch (Exception e) {
+            return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), request.getContextPath(), url);
+        }
     }
 
-    public String toUpper(String str) {
-        return str.toUpperCase();
+    public String redirectUrl(String url) {
+        String _fromGateway = Objects.requireNonNullElse(request.getHeader("from-gateway"), "false");
+        String gatewayHost = Objects.requireNonNullElse(request.getHeader("gateway-host"), "");
+        boolean fromGateway = _fromGateway.equals("true");
+
+        return fromGateway ? request.getScheme() + "://" + gatewayHost + "/admin" + url : request.getContextPath() + url;
     }
 
-    public Map<String, List<String>> getErrorMessages(Errors errors) {
+    public Map<String, List<String>> getErrorMessages(Errors errors){ //JSON 받을 때는 에러를 직접 가공
         // FieldErrors
 
 
@@ -77,5 +86,25 @@ public class Utils { // 빈의 이름 - utils
         List<String> messages = getCodeMessages(new String[] {code});
 
         return messages.isEmpty() ? code : messages.get(0);
+    }
+
+    /**
+     * 요청 데이터 단일 조회 편의 함수
+     *
+     * @param name
+     * @return
+     */
+    public String getParam(String name) {
+        return request.getParameter(name);
+    }
+
+    /**
+     * 요청 데이터 복수개 조회 편의 함수
+     *
+     * @param name
+     * @return
+     */
+    public String[] getParams(String name) {
+        return request.getParameterValues(name);
     }
 }

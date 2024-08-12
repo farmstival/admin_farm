@@ -1,17 +1,24 @@
 package com.joyfarm.farmstival.file.services;
 
+
 import com.joyfarm.farmstival.file.constants.FileStatus;
 import com.joyfarm.farmstival.file.entities.FileInfo;
+import com.joyfarm.farmstival.file.entities.QFileInfo;
 import com.joyfarm.farmstival.file.exceptions.FileNotFoundException;
 import com.joyfarm.farmstival.file.repositories.FileInfoRepository;
 import com.joyfarm.farmstival.global.configs.FileProperties;
+import com.querydsl.core.BooleanBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+
+import static org.springframework.data.domain.Sort.Order.asc;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +59,32 @@ public class FileInfoService {
      */
     public List<FileInfo> getList(String gid, String location, FileStatus status) {
 
-        return null;
+        QFileInfo fileInfo = QFileInfo.fileInfo;
+        BooleanBuilder andBuilder = new BooleanBuilder();
+        andBuilder.and(fileInfo.gid.eq(gid));
+
+        if (StringUtils.hasText(location)) {
+            andBuilder.and(fileInfo.location.eq(location));
+        }
+
+        if (status != FileStatus.ALL) {
+            andBuilder.and(fileInfo.done.eq(status == FileStatus.DONE));
+        }
+
+        List<FileInfo> items = (List<FileInfo>)infoRepository.findAll(andBuilder, Sort.by(asc("createdAt")));
+
+        // 2차 추가 데이터 처리
+        items.forEach(this::addFileInfo);
+
+        return items;
+    }
+
+    public List<FileInfo> getList(String gid, String location) {
+        return getList(gid, location, FileStatus.DONE);
+    }
+
+    public List<FileInfo> getList(String gid) {
+        return getList(gid, null, FileStatus.DONE);
     }
 
     /**
@@ -71,7 +103,7 @@ public class FileInfoService {
 
     // 브라우저 접근 주소
     public String getFileUrl(FileInfo item) {
-        return request.getContextPath() + properties.getUrl() + "/" + getFolder(item.getSeq()) + "/" + getFileName(item);
+        return request.getContextPath() + properties.getUrl() + getFolder(item.getSeq()) + "/" + getFileName(item);
     }
 
     // 서버 업로드 경로

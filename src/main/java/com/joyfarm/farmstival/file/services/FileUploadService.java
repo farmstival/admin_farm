@@ -1,5 +1,6 @@
 package com.joyfarm.farmstival.file.services;
 
+
 import com.joyfarm.farmstival.file.entities.FileInfo;
 import com.joyfarm.farmstival.file.repositories.FileInfoRepository;
 import com.joyfarm.farmstival.global.configs.FileProperties;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class FileUploadService {
 
     private final FileInfoRepository fileInfoRepository;
+    private final FileInfoService fileInfoService;
     private final FileProperties properties;
 
     public List<FileInfo> upload(MultipartFile[] files, String gid, String location) {
@@ -72,6 +74,8 @@ public class FileUploadService {
                 fileInfoRepository.flush();
             }
         }
+
+        uploadedFiles.forEach(fileInfoService::addFileInfo);
 
         return uploadedFiles;
     }
