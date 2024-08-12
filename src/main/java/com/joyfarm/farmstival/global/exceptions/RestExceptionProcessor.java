@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface RestExceptionProcessor {
-
     @ExceptionHandler(Exception.class)
     default ResponseEntity<JSONData> errorHandler(Exception e) {
 
         Object message = e.getMessage();
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR; // 500
-        if (e instanceof CommonException commonException) {
+        if (e instanceof CommonException commonException) {//커맨드 객체 오류
             status = commonException.getStatus();
 
             Map<String, List<String>> errorMessages = commonException.getErrorMessages();
