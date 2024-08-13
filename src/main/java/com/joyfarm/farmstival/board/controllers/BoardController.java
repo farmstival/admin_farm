@@ -71,11 +71,13 @@ public class BoardController implements ExceptionProcessor {
      * @param chks
      * @return
      */
-    @PatchMapping
+    @PatchMapping//PATCH요청.. 자원의 일부를 변경하고자 할 때 사용
     public String editList(@RequestParam("chk") List<Integer> chks, Model model) {
-        commonProcess("list", model);
+        //게시판 목록에서 chk이름의 체크박스가 선택되면 폼 제출될때 해당 값 chks 리스트에 받아옴
 
-        configSaveService.saveList(chks);
+        commonProcess("list", model); //서브메뉴로 게시판 목록 선택
+
+        configSaveService.saveList(chks); //선택된 게시판 수정 작업
 
         model.addAttribute("script", "parent.location.reload()");
         return "common/_execute_script";
