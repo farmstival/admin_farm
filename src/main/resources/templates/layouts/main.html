@@ -8,8 +8,9 @@
     <title>
         <th:block th:if="${pageTitle != null}"
         th:text="${#strings.concat(pageTitle, ' - ')}"></th:block>
-        사이트 제목
+        조이팜
     </title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
     <link rel="stylesheet" type="text/css" th:href="${@utils.url('/css/style.css')}">
     <link th:if="${addCss != null}" rel="stylesheet" type="text/css"
           th:each="cssFile: ${addCss}" th:href="${@utils.url(#strings.concat('/css/', cssFile, '.css'))}">
