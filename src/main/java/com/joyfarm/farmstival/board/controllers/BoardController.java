@@ -52,11 +52,11 @@ public class BoardController implements ExceptionProcessor {
      */
     @GetMapping
     public String list(@ModelAttribute BoardSearch search, Model model) {
-        commonProcess("list", model);
+        commonProcess("list", model); //서브메뉴로 게시판 목록 선택
 
-        ListData<Board> data = configInfoService.getList(search, true);
+        ListData<Board> data = configInfoService.getList(search, true); //모든 게시판 목록 조회
 
-        List<Board> items = data.getItems();
+        List<Board> items = data.getItems(); //게시판 객체 리스트
         Pagination pagination = data.getPagination();
 
         model.addAttribute("items", items);
@@ -71,11 +71,13 @@ public class BoardController implements ExceptionProcessor {
      * @param chks
      * @return
      */
-    @PatchMapping
+    @PatchMapping//PATCH요청.. 자원의 일부를 변경하고자 할 때 사용
     public String editList(@RequestParam("chk") List<Integer> chks, Model model) {
-        commonProcess("list", model);
+        //게시판 목록에서 chk이름의 체크박스가 선택되면 폼 제출될때 해당 값 chks 리스트에 받아옴
 
-        configSaveService.saveList(chks);
+        commonProcess("list", model); //서브메뉴로 게시판 목록 선택
+
+        configSaveService.saveList(chks); //선택된 게시판 수정 작업
 
         model.addAttribute("script", "parent.location.reload()");
         return "common/_execute_script";
@@ -158,9 +160,9 @@ public class BoardController implements ExceptionProcessor {
      */
     private void commonProcess(String mode, Model model) {
         String pageTitle = "게시판 목록";
-        mode = StringUtils.hasText(mode) ? mode : "list";
+        mode = StringUtils.hasText(mode) ? mode : "list"; //기본값 list
 
-        if (mode.equals("add")) {
+        if (mode.equals("add")) { //페이지 제목 동적으로 설정
             pageTitle = "게시판 등록";
 
         } else if (mode.equals("edit")) {
@@ -174,14 +176,15 @@ public class BoardController implements ExceptionProcessor {
         List<String> addScript = new ArrayList<>();
 
         if (mode.equals("add") || mode.equals("edit")) { // 게시판 등록 또는 수정
+            //에디터 편집기, 파일 관리 기능
             addScript.add("ckeditor5/ckeditor");
             addScript.add("fileManager");
 
             addScript.add("board/form");
         }
 
-        model.addAttribute("pageTitle", pageTitle);
-        model.addAttribute("subMenuCode", mode);
-        model.addAttribute("addScript", addScript);
+        model.addAttribute("pageTitle", pageTitle); //템플릿에서 ${pageTitle}로 참조
+        model.addAttribute("subMenuCode", mode); //활성화된 서브 메뉴
+        model.addAttribute("addScript", addScript); //템플릿에 자바스크립트 파일을 스크립트 태그로 동적 포함
     }
 }
