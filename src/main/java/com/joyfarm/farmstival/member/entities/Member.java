@@ -3,10 +3,7 @@ package com.joyfarm.farmstival.member.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joyfarm.farmstival.global.entities.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -20,10 +17,19 @@ public class Member extends BaseEntity {
     @Id
     @GeneratedValue
     private Long seq;
+
+    @Column(length=65, unique = true, nullable = false)
     private String email;
+
+    @Column(length=65, nullable = false)
     private String password;
+
+    @Column(length=40, nullable = false)
     private String userName;
+
+    @Column(length=15, nullable = false)
     private String mobile;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "member")
     private List<Authorities> authorities;
