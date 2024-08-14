@@ -5,7 +5,7 @@
 <section layout:fragment="content">
     <h1>게시판 목록</h1>
     <h2>게시판 조회</h2>
-    <form name="frmSearch" method="get" th:action="${@utils.url('/board')}" autocomplete="off" th:object="${boardSearch}">
+    <form name="frmSearch" method="get" th:action="${@utils.redirectUrl('/board')}" autocomplete="off" th:object="${boardSearch}">
         <table class="table_cols mb30">
             <tr>
                 <th>키워드</th>
@@ -27,7 +27,7 @@
     </form>
 
     <h2>게시판 목록</h2>
-    <form name="frmList" method="post" th:action="${@utils.url('/board')}" target="ifrmProcess" autocomplete="off">
+    <form name="frmList" method="post" th:action="${@utils.redirectUrl('/board')}" target="ifrmProcess" autocomplete="off">
         <input type="hidden" name="_method" value="PATCH">
 
         <table class="table_rows">
@@ -75,7 +75,7 @@
             </tbody>
         </table>
 
-        <div class="table_actions">
+        <div class="table_actions"><!--common.js에서 양식 공통 처리함-->
             <button type="button" class="sbtn form_action" data-mode="delete" data-form-name="frmList">선택 게시판 삭제</button>
             <button type="button" class="sbtn on form_action" data-mode="edit" data-form-name="frmList">선택 게시판 수정</button>
         </div>

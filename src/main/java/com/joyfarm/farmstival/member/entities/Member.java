@@ -3,22 +3,34 @@ package com.joyfarm.farmstival.member.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joyfarm.farmstival.global.entities.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
 @Data
 @Builder
+@Entity
 @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Member extends BaseEntity {
+    @Id
+    @GeneratedValue
     private Long seq;
+
+    @Column(length=65, unique = true, nullable = false)
     private String email;
+
+    @Column(length=65, nullable = false)
     private String password;
+
+    @Column(length=40, nullable = false)
     private String userName;
+
+    @Column(length=15, nullable = false)
     private String mobile;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "member")
     private List<Authorities> authorities;
 }
