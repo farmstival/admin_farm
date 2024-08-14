@@ -72,7 +72,7 @@ public class AllMemberConfigInfoService implements UserDetailsService {
     public ListData<Member> getList(MemberSearch search) {
 
         int page = Math.max(search.getPage(), 1); // 페이지 번호
-        int limit = Math.max(search.getLimit(), 20); // 1페이지당 레코드 갯수
+        int limit = Math.max(search.getLimit(), 10); // 1페이지당 레코드 갯수
         int offset = (page - 1) * limit; // 레코드 시작 위치 번호
 
         BooleanBuilder andBuilder = new BooleanBuilder();

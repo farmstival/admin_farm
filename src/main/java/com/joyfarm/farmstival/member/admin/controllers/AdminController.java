@@ -3,9 +3,12 @@ package com.joyfarm.farmstival.member.admin.controllers;
 import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
 import com.joyfarm.farmstival.member.admin.services.AllMemberConfigInfoService;
+import com.joyfarm.farmstival.member.admin.services.MemberConfigSaveService;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Member;
+import com.joyfarm.farmstival.menus.Menu;
+import com.joyfarm.farmstival.menus.MenuDetail;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +24,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController  {
     private final AllMemberConfigInfoService memberConfigInfoService;
+    private final MemberConfigSaveService memberConfigSaveService;
     private final HttpServletRequest request;
+
+
+    @ModelAttribute("menuCode")
+    public String getMenuCode() { // 주 메뉴 코드
+        return "member";
+    }
+
+    @ModelAttribute("subMenus")
+    public List<MenuDetail> getSubMenus() { // 서브 메뉴
+        return Menu.getMenus("member");
+    }
 
     @ModelAttribute("memberAuthorities")
     public List<String[]> memberAuthorities() {
@@ -31,7 +46,7 @@ public class AdminController  {
     @GetMapping
     public String index(@ModelAttribute MemberSearch search, Model model){
 
-        commonProcess("manage", model);
+        commonProcess("list", model);
 
         ListData<Member> data = memberConfigInfoService.getList(search);
         List<Member> items = data.getItems();
@@ -39,6 +54,7 @@ public class AdminController  {
 
         model.addAttribute("items", items);
         model.addAttribute("pagination", pagination);
+
 
         return "member/manage";
     }
@@ -55,7 +71,7 @@ public class AdminController  {
 
         commonProcess("manage", model);
 
-        //memberConfigInfoService.saveList(chks); 선택된 회원 수정
+        memberConfigSaveService.saveList(chks);
 
         model.addAttribute("script", "parent.location.reload()");
         return "common/_execute_script";
@@ -69,7 +85,7 @@ public class AdminController  {
     private void commonProcess(String mode, Model model){
         String pageTitle = "회원 목록";
 
-        mode = StringUtils.hasText(mode) ? mode : "manage";
+        mode = StringUtils.hasText(mode) ? mode : "list";
 
         if (mode.equals("add")) { //페이지 제목 동적으로 설정
             pageTitle = "회원 등록";

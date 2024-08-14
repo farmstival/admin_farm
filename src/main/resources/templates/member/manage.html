@@ -40,14 +40,13 @@
                 <th width="250">회원명</th>
                 <th width="120">전화번호</th>
                 <th width="250">권한</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${items == null || items.isEmpty()}">
                 <td colspan="6" class="no_data">조회된 회원이 없습니다.</td>
             </tr>
-            <tr th:unless="${items == null || items.isEmpty()}" th:each="item, status : ${items}" th:object="${item}">
+            <tr th:each="item, status : ${items}" th:object="${item}">
                 <td align="center">
                     <input type="hidden" th:name="${'email_' + status.index}" th:value="*{email}">
                     <input type="checkbox" name="chk" th:value="${status.index}" th:id="${'chk_' + status.index}">
@@ -63,20 +62,15 @@
                                th:value="*{authority.name}"
                                th:checked="*{authority.name == 'USER'}"
                                th:id="${'authority_' + status.index + '_USER'}">
-                        <label th:for="${'authority_' + status.index + '_USER'}" th:text="*{authority.title}"></label>
-                        [[*{authority.title}]]
+                        <label th:for="${'authority_' + status.index + '_USER'}">일반회원</label>
+
                         <input type="radio"
                                th:name="${'authority_' + status.index}"
                                th:value="*{authority.name}"
                                th:checked="*{authority.name == 'ADMIN'}"
                                th:id="${'authority_' + status.index + '_ADMIN'}">
-                        <label th:for="${'authority_' + status.index + '_ADMIN'}">ADMIN</label>
+                        <label th:for="${'authority_' + status.index + '_ADMIN'}">관리자</label>
                     </div>
-                </td>
-                <td>
-                    <a th:href="*{@utils.url('/member/edit/' + email)}" class="sbtn">
-                        <i class="xi-pen"></i> 수정하기
-                    </a>
                 </td>
             </tr>
             </tbody>
@@ -87,4 +81,6 @@
             <button type="button" class="sbtn on form_action" data-mode="edit" data-form-name="frmList">선택 회원 수정</button>
         </div>
     </form>
+
+    <th:block th:replace="~{common/_pagination::pagination}"></th:block>
 </section>
