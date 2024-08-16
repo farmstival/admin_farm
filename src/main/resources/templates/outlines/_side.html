@@ -13,6 +13,9 @@
         </a>
     </div>
     <div class="sidebar-footer">
+        <a th:href="${@utils.redirectUrl('/')}" th:classappend="${menuCode} == 'main' ? 'on'">
+            <i class="xi-home-o"></i> 대시보드
+        </a>
         <a href="http://localhost:4000" th:classappend="${menuCode} == 'site' ? 'on'">
             <i class="xi-external-link"></i> 사이트 이동
         </a>
