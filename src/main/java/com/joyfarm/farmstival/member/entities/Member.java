@@ -18,6 +18,9 @@ public class Member extends BaseEntity {
     @GeneratedValue
     private Long seq;
 
+    @Column(length=45, nullable=false)
+    private String gid;
+
     @Column(length=65, unique = true, nullable = false)
     private String email;
 

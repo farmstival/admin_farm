@@ -26,8 +26,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(c -> {
-                    c.requestMatchers("/js/**", "/css/**", "/images/**", "/logout").permitAll()
-                            .anyRequest().hasAnyAuthority("ADMIN");
+                    c.requestMatchers("/js/**", "/css/**", "/images/**", "/logout","/api/board/config/**").permitAll()
+                            .anyRequest().permitAll();
+                            //.anyRequest().hasAnyAuthority("ADMIN");
                 });
 
         http.logout(c -> {
