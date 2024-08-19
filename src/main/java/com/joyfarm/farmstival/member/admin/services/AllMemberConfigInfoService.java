@@ -63,6 +63,14 @@ public class AllMemberConfigInfoService implements UserDetailsService {
                 .authorities(authorities)
                 .build();
     }
+
+    public Member get(String email) throws UsernameNotFoundException{
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+
+        return member;
+    }
+
+
     /**
      * 회원 목록
      *

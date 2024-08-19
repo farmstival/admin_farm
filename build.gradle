@@ -52,6 +52,19 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 
 
+	// Google Analytics Data API Library
+	implementation 'com.google.analytics.data:google-analytics-data:0.7.0'
+
+	// Google Auth Library
+	implementation 'com.google.auth:google-auth-library-oauth2-http:1.11.0'
+
+	// Jackson for JSON
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.1'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.1'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
+
+
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testRuntimeOnly 'com.h2database:h2'

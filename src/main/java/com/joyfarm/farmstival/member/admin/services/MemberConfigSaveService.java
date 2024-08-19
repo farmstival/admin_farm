@@ -29,6 +29,7 @@ public class MemberConfigSaveService {
             Member member = memberRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new AlertException("해당 이메일의 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
+            if(member == null) continue;
         }
 
         // 모든 수정된 사항을 데이터베이스에 반영
