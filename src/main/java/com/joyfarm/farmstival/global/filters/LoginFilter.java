@@ -106,6 +106,7 @@ public class LoginFilter extends GenericFilterBean {
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             // 만료된 경우 또는 인증 오류시 레디스 저장 정보 삭제
             repository.deleteById(session.getId());
         }
