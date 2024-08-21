@@ -58,7 +58,8 @@ public class GoogleAnalyticsService {
         }
     }
 
-    public Map<String, Object> getWeeklyAndMonthlyData() {
+    // 주간 및 월간 데이터를 가져오는 메서드
+    public Map<String, Object> getVisitorData() {
         String accessToken = getAccessToken();
 
         // GA4 API 요청 URL
@@ -71,7 +72,7 @@ public class GoogleAnalyticsService {
 
         // 일주일치 데이터 요청
         Map<String, Object> weeklyRequestBody = new HashMap<>();
-        weeklyRequestBody.put("dateRanges", List.of(Map.of("startDate", "2024-08-14", "endDate", "today"))); // 일주일 전부터 오늘까지
+        weeklyRequestBody.put("dateRanges", List.of(Map.of("startDate", "2024-08-14", "endDate", "today")));
         weeklyRequestBody.put("metrics", List.of(Map.of("name", "activeUsers")));
         weeklyRequestBody.put("dimensions", List.of(Map.of("name", "date")));
 
@@ -79,7 +80,7 @@ public class GoogleAnalyticsService {
 
         // 한 달치 데이터 요청
         Map<String, Object> monthlyRequestBody = new HashMap<>();
-        monthlyRequestBody.put("dateRanges", List.of(Map.of("startDate", "2024-07-21", "endDate", "today"))); // 한 달 전부터 오늘까지
+        monthlyRequestBody.put("dateRanges", List.of(Map.of("startDate", "2024-07-21", "endDate", "today")));
         monthlyRequestBody.put("metrics", List.of(Map.of("name", "activeUsers")));
         monthlyRequestBody.put("dimensions", List.of(Map.of("name", "date")));
 
@@ -90,20 +91,9 @@ public class GoogleAnalyticsService {
         ResponseEntity<Map> monthlyResponse = restTemplate.postForEntity(url, monthlyEntity, Map.class);
 
         Map<String, Object> result = new HashMap<>();
-        if (weeklyResponse.getStatusCode() == HttpStatus.OK && weeklyResponse.getBody() != null) {
-            result.put("weeklyData", weeklyResponse.getBody());
-        } else {
-            throw new RuntimeException("Failed to retrieve weekly data");
-        }
-
-        if (monthlyResponse.getStatusCode() == HttpStatus.OK && monthlyResponse.getBody() != null) {
-            result.put("monthlyData", monthlyResponse.getBody());
-        } else {
-            throw new RuntimeException("Failed to retrieve monthly data");
-        }
+        result.put("weeklyData", weeklyResponse.getBody());
+        result.put("monthlyData", monthlyResponse.getBody());
 
         return result;
     }
-
-
 }
