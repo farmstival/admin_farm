@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Analytics Data Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* 캔버스 고정 크기 설정 */
+        #analyticsChart {
+            width: 1000px !important;  /* 캔버스의 고정 너비 */
+            height: 800px !important; /* 캔버스의 고정 높이 */
+            max-width: 100%; /* 화면 크기에 따라 조정되지 않도록 설정 */
+            max-height: 100%; /* 화면 크기에 따라 조정되지 않도록 설정 */
+            border: 1px solid #ddd; /* 캔버스에 테두리 추가 (선택 사항) */
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+<h1>Google Analytics Data Chart</h1>
+
+    <canvas id="analyticsChart"></canvas>
+
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/analytics/visitorInfo',
+            method: 'GET',
+            success: function(response) {
+                const weeklyLabels = response.weeklyData.rows.map(row => row.dimensionValues[0].value);
+                const weeklyData = response.weeklyData.rows.map(row => row.metricValues[0].value);
+
+                const monthlyLabels = response.monthlyData.rows.map(row => row.dimensionValues[0].value);
+                const monthlyData = response.monthlyData.rows.map(row => row.metricValues[0].value);
+
+                const ctx = document.getElementById('analyticsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: weeklyLabels, // x축 레이블 (일주일치 데이터에 사용)
+                        datasets: [
+                            {
+                                label: '일주일간 사용자',
+                                data: weeklyData,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 1,
+                                yAxisID: 'y1'
+                            },
+                            {
+                                label: '월간 사용자',
+                                data: monthlyData,
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                borderWidth: 1,
+                                yAxisID: 'y2'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio:false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '날짜'
+                                },
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '사용자 수'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                position: 'left',
+                                beginAtZero: true
+                            },
+                            y2: {
+                                type: 'linear',
+                                position: 'right',
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            error: function() {
+                alert('Failed to load data');
+            }
+        });
+    });
+</script>
+</section>
+</body>
+</html>
