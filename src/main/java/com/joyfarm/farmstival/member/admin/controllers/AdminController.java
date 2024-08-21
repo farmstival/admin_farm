@@ -4,6 +4,7 @@ import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
 import com.joyfarm.farmstival.member.admin.services.AllMemberConfigInfoService;
 import com.joyfarm.farmstival.member.admin.services.MemberConfigSaveService;
+import com.joyfarm.farmstival.member.admin.services.MemberDeleteService;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Member;
@@ -25,6 +26,7 @@ import java.util.List;
 public class AdminController  {
     private final AllMemberConfigInfoService memberConfigInfoService;
     private final MemberConfigSaveService memberConfigSaveService;
+    private final MemberDeleteService memberDeleteService;
     private final HttpServletRequest request;
 
 
@@ -69,11 +71,21 @@ public class AdminController  {
     public String editList(@RequestParam("chk") List<Integer> chks, Model model) {
         //회원 목록에서 chk이름의 체크박스가 선택되면 폼 제출될때 해당 값 chks 리스트에 받아옴
 
-        commonProcess("manage", model);
+        commonProcess("list", model);
 
         memberConfigSaveService.saveList(chks);
 
         model.addAttribute("script", "parent.location.reload()");
+        return "common/_execute_script";
+    }
+
+    @DeleteMapping
+    public String deleteList(@RequestParam("chk") List<Integer> chks, Model model) {
+        commonProcess("list", model);
+
+        memberDeleteService.deleteList(chks);
+
+        model.addAttribute("script", "parent.location.reload();");
         return "common/_execute_script";
     }
 
