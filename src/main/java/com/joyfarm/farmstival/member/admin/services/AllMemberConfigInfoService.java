@@ -12,18 +12,26 @@ import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.Order.desc;
 
 @Service
 @RequiredArgsConstructor
@@ -98,12 +106,55 @@ public class AllMemberConfigInfoService implements UserDetailsService {
                 .orderBy(new OrderSpecifier(Order.DESC, pathBuilder.get("createdAt")))
                 .fetch();
 
+
+        /* 검색 조건 처리 S */
+        String email = search.getEmail();
+        String userName = search.getUserName();
+
+        String sopt = search.getSopt();
+        sopt = StringUtils.hasText(sopt) ? sopt.trim() : "ALL";
+        String skey = search.getSkey();
+
+        if(StringUtils.hasText(email)){
+            andBuilder.and(member.email.contains(email.trim()));
+        }
+
+        if(StringUtils.hasText(userName)){
+            andBuilder.and(member.userName.contains(userName.trim()));
+        }
+
+        //조건별 키워드 검색
+        if(StringUtils.hasText(skey)){
+            skey = skey.trim();
+
+            BooleanExpression cond1 = member.email.contains(skey);
+            BooleanExpression cond2 = member.userName.contains(skey);
+
+            if(sopt.equals("email")){
+                andBuilder.and(cond1);
+            } else if (sopt.equals("userName")) {
+                andBuilder.and(cond2);
+            }else {
+                BooleanBuilder orBuilder = new BooleanBuilder();
+                orBuilder.or(cond1)
+                        .or(cond2);
+                andBuilder.and(orBuilder);
+            }
+        }
+
+        /* 검색 조건 처리 E */
+
         /* 페이징 처리 S */
         int total = (int)memberRepository.count(andBuilder); // 총 레코드 갯수
 
-        Pagination pagination = new Pagination(page, total, 10, limit, request);
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
+
+        Page<Member> data = memberRepository.findAll(andBuilder,pageable);
+
+        Pagination pagination = new Pagination(page, (int)data.getTotalElements(), limit, 10, request);
         /* 페이징 처리 E */
 
         return new ListData<>(items, pagination);
+        //        return new ListData<>(data.getContent(), pagination);
     }
 }

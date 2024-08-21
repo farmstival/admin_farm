@@ -9,6 +9,7 @@ public class MemberSearch {
     private int offset;
     private int endRows;
     private String email;
+    private String userName;
     private String sopt = "ALL";
     private String skey;
 }
