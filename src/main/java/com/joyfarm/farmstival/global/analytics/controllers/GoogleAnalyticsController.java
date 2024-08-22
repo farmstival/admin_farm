@@ -17,6 +17,7 @@ public class GoogleAnalyticsController {
     // JSON 데이터만 반환하는 API 엔드포인트
     @GetMapping("/analytics/visitorInfo")
     public Map<String, Object> getVisitorInfo() {
-        return googleAnalyticsService.getVisitorData();
+        Map<String, Object> data = googleAnalyticsService.getVisitorData();
+        return data;
     }
 }

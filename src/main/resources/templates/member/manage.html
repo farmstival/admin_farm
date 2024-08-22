@@ -37,10 +37,12 @@
                     <input type="checkbox" class="checkall" data-target-name="chk" id="checkall">
                     <label for="checkall"></label>
                 </th>
-                <th width="150">회원 이메일</th>
-                <th width="250">회원명</th>
-                <th width="120">전화번호</th>
-                <th width="250">권한</th>
+                <th class="board-table-no">번호</th>
+                <th class="board-table-email">이메일</th>
+                <th class="board-table-name">회원명</th>
+                <th class="board-table-mobile">전화번호</th>
+                <th class="board-table-date">가입일</th>
+                <th class="board-table-authority">권한</th>
             </tr>
             </thead>
             <tbody>
@@ -53,9 +55,11 @@
                     <input type="checkbox" name="chk" th:value="${status.index}" th:id="${'chk_' + status.index}">
                     <label th:for="${'chk_' + status.index}"></label>
                 </td>
+                <td th:text="*{seq}" align="center"></td>
                 <td th:text="*{email}" align="center"></td>
                 <td th:text="*{userName}" align="center"></td>
                 <td th:text="*{mobile}" align="center"></td>
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}" align="center"></td>
                 <td align="center">
                     <div th:each="auth : *{authorities}" th:object="${auth}">
                         <input type="radio"

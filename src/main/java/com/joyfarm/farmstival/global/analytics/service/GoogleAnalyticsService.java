@@ -86,14 +86,26 @@ public class GoogleAnalyticsService {
 
         HttpEntity<Map<String, Object>> monthlyEntity = new HttpEntity<>(monthlyRequestBody, headers);
 
+        // 페이지별 조회수 데이터 요청
+        Map<String, Object> pageViewsRequestBody = new HashMap<>();
+        pageViewsRequestBody.put("dateRanges", List.of(Map.of("startDate", "7daysAgo", "endDate", "today")));
+        pageViewsRequestBody.put("metrics", List.of(Map.of("name", "screenPageViews"))); // 페이지뷰 메트릭
+        pageViewsRequestBody.put("dimensions", List.of(Map.of("name", "pagePath"))); // 페이지 경로 차원
+
+        HttpEntity<Map<String, Object>> pageViewsEntity = new HttpEntity<>(pageViewsRequestBody, headers);
+
         // API 호출
         ResponseEntity<Map> weeklyResponse = restTemplate.postForEntity(url, weeklyEntity, Map.class);
         ResponseEntity<Map> monthlyResponse = restTemplate.postForEntity(url, monthlyEntity, Map.class);
+        ResponseEntity<Map> pageViewsResponse = restTemplate.postForEntity(url, pageViewsEntity, Map.class);
 
+        // 결과를 맵에 저장
         Map<String, Object> result = new HashMap<>();
         result.put("weeklyData", weeklyResponse.getBody());
         result.put("monthlyData", monthlyResponse.getBody());
+        result.put("pageViewsData", pageViewsResponse.getBody());
 
         return result;
     }
 }
+

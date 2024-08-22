@@ -32,6 +32,8 @@ public class MemberConfigSaveService {
             if(member == null) continue;
         }
 
+        //관리자, 회원 권한수정 코드 추가
+
         // 모든 수정된 사항을 데이터베이스에 반영
         memberRepository.flush();
     }
