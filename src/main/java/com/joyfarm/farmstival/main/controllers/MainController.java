@@ -1,6 +1,7 @@
 package com.joyfarm.farmstival.main.controllers;
 
 import com.joyfarm.farmstival.global.Utils;
+import com.joyfarm.farmstival.global.analytics.service.GoogleAnalyticsService;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainController {
     private final Utils utils;
+    private final GoogleAnalyticsService googleAnalyticsService;
 
     @ModelAttribute("menuCode")
     public String getMenuCode() { // 주 메뉴 코드
@@ -33,5 +35,10 @@ public class MainController {
     @GetMapping
     public String index(Model model, HttpServletRequest request) {
         return "main/index";
+    }
+
+    @GetMapping("/dashboard")
+    public String getDashboard(Model model, HttpServletRequest request) {
+        return "analytics/visitorInfo";
     }
 }

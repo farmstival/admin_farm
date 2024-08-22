@@ -13,11 +13,14 @@
         </a>
     </div>
     <div class="sidebar-footer">
-        <a th:href="${@utils.redirectUrl('/')}" th:classappend="${menuCode} == 'main' ? 'on'">
-            <i class="xi-home-o"></i> 대시보드
+        <a th:href="${@utils.redirectUrl('/dashboard')}" th:classappend="${menuCode} == 'main' ? 'on'">
+            <i class="xi-dashboard-o"></i> 대시보드
         </a>
         <a href="http://localhost:4000" th:classappend="${menuCode} == 'site' ? 'on'" target="_blank">
             <i class="xi-external-link"></i> 사이트 이동
+        </a>
+        <a href="https://analytics.google.com/analytics/web/#/p454957260/reports/intelligenthome?params=_u..nav%3Dmaui" th:classappend="${menuCode} == 'site' ? 'on'" target="_blank">
+            <i class="xi-eye-o"></i> 사이트 관리
         </a>
     </div>
 </aside>
