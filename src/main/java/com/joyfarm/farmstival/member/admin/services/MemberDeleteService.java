@@ -26,19 +26,14 @@ public class MemberDeleteService {
      * 회원 삭제
      */
     public void delete(String email) {
-        log.info("Attempting to delete member with email: {}", email);
         Member member = memberConfigInfoService.get(email);
 
         if (member == null) {
-            log.warn("Member with email {} not found", email);
             throw new AlertException("회원이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         }
 
-        log.info("Found member: {}", member);
         memberRepository.delete(member);
-        // `flush`는 필요할 때만 호출
         memberRepository.flush();
-        log.info("Deleted member with email: {}", email);
     }
 
     /**
@@ -51,12 +46,10 @@ public class MemberDeleteService {
 
         for (int chk : chks) {
             String email = utils.getParam("email_" + chk);
-            log.info("Deleting member with email: {}", email);
             try {
                 delete(email);
             } catch (AlertException e) {
                 log.error("Error deleting member with email: {}", email, e);
-                // 예외를 기록하고 필요에 따라 추가 처리를 수행할 수 있습니다.
             }
         }
     }
