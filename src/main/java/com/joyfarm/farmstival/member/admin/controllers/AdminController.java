@@ -50,13 +50,17 @@ public class AdminController  {
 
         commonProcess("list", model);
 
-        ListData<Member> data = memberConfigInfoService.getList(search);
-        List<Member> items = data.getItems();
-        Pagination pagination = data.getPagination();
-
-        model.addAttribute("items", items);
-        model.addAttribute("pagination", pagination);
-
+        //검색조건이 존재하면 검색 수행
+        if(search != null && StringUtils.hasText(search.getSopt()) && StringUtils.hasText(search.getSkey())){
+            List<Member> searchResults = memberConfigInfoService.searchMembers(search);
+            model.addAttribute("items", searchResults);
+        } else { //전체 조회
+            ListData<Member> data = memberConfigInfoService.getList(search);
+            List<Member> items = data.getItems();
+            model.addAttribute("items", items);
+            Pagination pagination = data.getPagination();
+            model.addAttribute("pagination", pagination);
+        }
 
         return "member/manage";
     }

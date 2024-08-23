@@ -12,7 +12,6 @@ import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -27,7 +26,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -108,41 +106,41 @@ public class AllMemberConfigInfoService implements UserDetailsService {
 
 
         /* 검색 조건 처리 S */
-        String email = search.getEmail();
-        String userName = search.getUserName();
-
-        String sopt = search.getSopt();
-        sopt = StringUtils.hasText(sopt) ? sopt.trim() : "ALL";
-        String skey = search.getSkey();
-
-        if(StringUtils.hasText(email)){
-            andBuilder.and(member.email.contains(email.trim()));
-        }
-
-        if(StringUtils.hasText(userName)){
-            andBuilder.and(member.userName.contains(userName.trim()));
-        }
-
-        //조건별 키워드 검색
-        if(StringUtils.hasText(skey)){
-            skey = skey.trim();
-
-            BooleanExpression cond1 = member.email.contains(skey);
-            BooleanExpression cond2 = member.userName.contains(skey);
-
-            if(sopt.equals("email")){
-                andBuilder.and(cond1);
-            } else if (sopt.equals("userName")) {
-                andBuilder.and(cond2);
-            }else {
-                BooleanBuilder orBuilder = new BooleanBuilder();
-                orBuilder.or(cond1)
-                        .or(cond2);
-                andBuilder.and(orBuilder);
-            }
-        }
-
-        /* 검색 조건 처리 E */
+//        String email = search.getEmail();
+//        String userName = search.getUserName();
+//
+//        String sopt = search.getSopt();
+//        sopt = StringUtils.hasText(sopt) ? sopt.trim() : "ALL";
+//        String skey = search.getSkey();
+//
+//        if(StringUtils.hasText(email)){
+//            andBuilder.and(member.email.contains(email.trim()));
+//        }
+//
+//        if(StringUtils.hasText(userName)){
+//            andBuilder.and(member.userName.contains(userName.trim()));
+//        }
+//
+//        //조건별 키워드 검색
+//        if(StringUtils.hasText(skey)){
+//            skey = skey.trim();
+//
+//            BooleanExpression cond1 = member.email.contains(skey);
+//            BooleanExpression cond2 = member.userName.contains(skey);
+//
+//            if(sopt.equals("email")){
+//                andBuilder.and(cond1);
+//            } else if (sopt.equals("userName")) {
+//                andBuilder.and(cond2);
+//            }else {
+//                BooleanBuilder orBuilder = new BooleanBuilder();
+//                orBuilder.or(cond1)
+//                        .or(cond2);
+//                andBuilder.and(orBuilder);
+//            }
+//        }
+//
+//        /* 검색 조건 처리 E */
 
         /* 페이징 처리 S */
         int total = (int)memberRepository.count(andBuilder); // 총 레코드 갯수
@@ -156,5 +154,27 @@ public class AllMemberConfigInfoService implements UserDetailsService {
 
         return new ListData<>(items, pagination);
         //        return new ListData<>(data.getContent(), pagination);
+    }
+
+    /**
+     * 회원검색
+     */
+    public List<Member> searchMembers(MemberSearch search){
+        BooleanBuilder builder = new BooleanBuilder();
+        QMember member = QMember.member;
+        if("email".equals(search.getSopt())){
+            builder.and(member.email.like("%"+search.getEmail()+"%"));
+        }else if("userName".equals(search.getSopt())){
+            builder.and(member.email.like("%"+search.getUserName()+"%"));
+        } else if ("ALL".equals(search.getSopt())) {
+            builder.or(member.email.like("%"+search.getEmail()+"%"))
+                    .or(member.userName.like("%"+search.getUserName()+"%"));
+        }
+        return new JPAQueryFactory(em)
+                .selectFrom(member)
+                .leftJoin(member.authorities)
+                .fetchJoin()
+                .where(builder)
+                .fetch();
     }
 }

@@ -5,7 +5,7 @@
 
 <section layout:fragment="content">
     <h1>회원 관리</h1>
-    <form name="frmSearch" method="get" th:action="${@utils.redirectUrl('/admin/member')}" autocomplete="off" th:object="${memberSearch}">
+    <form name="frmSearch" method="get" th:action="${@utils.redirectUrl('/member')}" autocomplete="off" th:object="${memberSearch}">
         <table class="table_cols mb30">
             <tr>
                 <th>키워드</th>
@@ -28,8 +28,8 @@
 
     <h2>회원 목록</h2>
     <form name="frmList" method="post" th:action="${@utils.redirectUrl('/member')}"
-        target="ifrmProcess" autocomplete="off">
-        <input type="hidden" name="_method" value="PATCH">
+        target="ifrmHidden" autocomplete="off">
+<!--        <input type="hidden" name="_method" value="PATCH">-->
         <table class="table_rows">
             <thead>
             <tr>
@@ -37,17 +37,18 @@
                     <input type="checkbox" class="checkall" data-target-name="chk" id="checkall">
                     <label for="checkall"></label>
                 </th>
-                <th class="board-table-no">번호</th>
-                <th class="board-table-email">이메일</th>
-                <th class="board-table-name">회원명</th>
-                <th class="board-table-mobile">전화번호</th>
-                <th class="board-table-date">가입일</th>
-                <th class="board-table-authority">권한</th>
+                <th>번호</th>
+                <th>이메일</th>
+                <th>회원명</th>
+                <th>전화번호</th>
+                <th>가입일</th>
+                <th>권한</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             <tr th:if="${items == null || items.isEmpty()}">
-                <td colspan="6" class="no_data">조회된 회원이 없습니다.</td>
+                <td colspan="8" class="no_data">조회된 회원이 없습니다.</td>
             </tr>
             <tr th:unless="${items == null || items.isEmpty()}" th:each="item, status : ${items}" th:object="${item}">
                 <td align="center">
@@ -76,6 +77,11 @@
                                th:id="${'authority_' + status.index + '_ADMIN'}">
                         <label th:for="${'authority_' + status.index + '_ADMIN'}">관리자</label>
                     </div>
+                </td>
+                <td>
+                    <a th:href="${@utils.redirectUrl('/member/edit/{email}(email=*{email})')}" class="sbtn on">
+                        <i class="xi-pen"></i> 회원정보 / 권한 수정
+                    </a>
                 </td>
             </tr>
             </tbody>
