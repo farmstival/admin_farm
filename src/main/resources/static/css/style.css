@@ -161,9 +161,12 @@ ac { text-align: center !important; }
 /* 대시보드 레이아웃 */
 .dashboard-container {
     display: grid;
-    grid-template-columns: 700px 700px; /* 각 열의 너비를 픽셀 단위로 지정 */
-    grid-template-rows: 500px 500px; /* 각 행의 높이를 픽셀 단위로 지정 */
+    /*grid-template-columns: 700px 700px; !* 각 열의 너비를 픽셀 단위로 지정 *!*/
+    /*grid-template-rows: 500px 500px; !* 각 행의 높이를 픽셀 단위로 지정 *!*/
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 20px; /* 각 섹션 사이의 간격 */
+    height: 80vh; /* 대시보드 높이 조정 */
     padding: 20px;
     box-sizing: border-box;
 }

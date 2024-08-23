@@ -27,7 +27,7 @@
     </form>
 
     <h2>게시판 목록</h2>
-    <form name="frmList" method="post" th:action="${@utils.redirectUrl('/board')}" target="ifrmProcess" autocomplete="off">
+    <form name="frmList" method="post" th:action="${@utils.redirectUrl('/board')}" target="ifrmHidden" autocomplete="off">
         <input type="hidden" name="_method" value="PATCH">
 
         <table class="table_rows">

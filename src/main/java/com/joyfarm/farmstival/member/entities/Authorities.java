@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Authorities {
+
     @Id
     @JsonIgnore
     @ManyToOne(fetch= FetchType.LAZY)

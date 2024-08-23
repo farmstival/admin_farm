@@ -18,8 +18,8 @@ public class Menu {
         ));
 
         menus.put("member", Arrays.asList(
-            new MenuDetail("list", "회원목록", "/member"),
-            new MenuDetail("authority", "회원권한", "/member/authority")
+            new MenuDetail("list", "회원목록", "/member")
+//            new MenuDetail("authority", "회원권한", "/member/authority")
         ));
         
         menus.put("board", Arrays.asList(
