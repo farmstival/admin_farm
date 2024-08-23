@@ -2,19 +2,22 @@ package com.joyfarm.farmstival.member.admin.controllers;
 
 import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
+import com.joyfarm.farmstival.global.Utils;
 import com.joyfarm.farmstival.member.admin.services.AllMemberConfigInfoService;
 import com.joyfarm.farmstival.member.admin.services.MemberConfigSaveService;
 import com.joyfarm.farmstival.member.admin.services.MemberDeleteService;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Member;
+import com.joyfarm.farmstival.member.validators.MemberFormValidator;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,7 +30,9 @@ public class AdminController  {
     private final AllMemberConfigInfoService memberConfigInfoService;
     private final MemberConfigSaveService memberConfigSaveService;
     private final MemberDeleteService memberDeleteService;
-    private final HttpServletRequest request;
+    private final MemberFormValidator memberFormValidator;
+
+    private final Utils utils;
 
 
     @ModelAttribute("menuCode")
@@ -50,15 +55,46 @@ public class AdminController  {
 
         commonProcess("list", model);
 
-        ListData<Member> data = memberConfigInfoService.getList(search);
-        List<Member> items = data.getItems();
-        Pagination pagination = data.getPagination();
-
-        model.addAttribute("items", items);
-        model.addAttribute("pagination", pagination);
-
+        //검색조건이 존재하면 검색 수행
+        if(search != null && StringUtils.hasText(search.getSopt()) && StringUtils.hasText(search.getSkey())){
+            List<Member> searchResults = memberConfigInfoService.searchMembers(search);
+            model.addAttribute("items", searchResults);
+        } else { //전체 조회
+            ListData<Member> data = memberConfigInfoService.getList(search);
+            List<Member> items = data.getItems();
+            model.addAttribute("items", items);
+            Pagination pagination = data.getPagination();
+            model.addAttribute("pagination", pagination);
+        }
 
         return "member/manage";
+    }
+
+    @GetMapping("/edit/{email}")
+    public String edit(@PathVariable("email") String email, @ModelAttribute RequestMember member, Model model){
+        commonProcess("edit", model);
+        member = memberConfigInfoService.getForm(email);
+
+        member.setAuthorities(member.getAuthorities());
+        model.addAttribute("requestMember",member);
+        return "member/edit";
+    }
+
+    @PostMapping("/save")
+    public String save(@Valid RequestMember form, Errors errors, Model model){
+        String mode = form.getMode();
+
+        commonProcess(mode,model);
+//        memberFormValidator.validate(member, errors);
+
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach(System.out::println);
+            return "member/mansge";
+        }
+
+        memberConfigSaveService.save(form);
+        return "redirect:"+ utils.redirectUrl("/member");
+
     }
 
     /**
