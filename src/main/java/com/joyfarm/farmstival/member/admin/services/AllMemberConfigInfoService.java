@@ -3,6 +3,7 @@ package com.joyfarm.farmstival.member.admin.services;
 import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
 import com.joyfarm.farmstival.member.MemberInfo;
+import com.joyfarm.farmstival.member.admin.controllers.RequestMember;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Authorities;
@@ -17,6 +18,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -159,22 +162,47 @@ public class AllMemberConfigInfoService implements UserDetailsService {
     /**
      * 회원검색
      */
-    public List<Member> searchMembers(MemberSearch search){
+    public List<Member> searchMembers(MemberSearch search) {
         BooleanBuilder builder = new BooleanBuilder();
         QMember member = QMember.member;
-        if("email".equals(search.getSopt())){
-            builder.and(member.email.like("%"+search.getEmail()+"%"));
-        }else if("userName".equals(search.getSopt())){
-            builder.and(member.email.like("%"+search.getUserName()+"%"));
-        } else if ("ALL".equals(search.getSopt())) {
-            builder.or(member.email.like("%"+search.getEmail()+"%"))
-                    .or(member.userName.like("%"+search.getUserName()+"%"));
+
+        String skey = search.getSkey();  // 검색 키워드
+        String sopt = search.getSopt();  // 검색 옵션
+
+        if (StringUtils.hasText(skey)) {
+            skey = skey.trim();
+
+            // 검색 옵션에 따른 검색 조건 설정
+            if ("email".equals(sopt)) {
+                builder.and(member.email.contains(skey));
+            } else if ("userName".equals(sopt)) {
+                builder.and(member.userName.contains(skey));
+            } else if ("ALL".equals(sopt)) {
+                BooleanBuilder orBuilder = new BooleanBuilder();
+                orBuilder.or(member.email.contains(skey))
+                        .or(member.userName.contains(skey));
+                builder.and(orBuilder);
+            }
         }
+
+        // 쿼리 실행
         return new JPAQueryFactory(em)
                 .selectFrom(member)
                 .leftJoin(member.authorities)
                 .fetchJoin()
                 .where(builder)
                 .fetch();
+    }
+
+    public RequestMember getForm(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+
+        RequestMember form = new ModelMapper().map(member, RequestMember.class);
+
+        List<String> authorities = member.getAuthorities().stream().map(a -> a.getAuthority().name()).toList();
+        form.setAuthorities(authorities);
+        form.setMode("edit");
+        form.setActivity(true);
+        return form;
     }
 }

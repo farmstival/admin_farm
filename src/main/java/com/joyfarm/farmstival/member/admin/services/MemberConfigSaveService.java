@@ -3,6 +3,7 @@ package com.joyfarm.farmstival.member.admin.services;
 
 import com.joyfarm.farmstival.global.Utils;
 import com.joyfarm.farmstival.global.exceptions.script.AlertException;
+import com.joyfarm.farmstival.member.admin.controllers.RequestMember;
 import com.joyfarm.farmstival.member.entities.Member;
 import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,26 @@ import java.util.List;
 public class MemberConfigSaveService {
 
     private final MemberRepository memberRepository;
+    private final AuthoritiesDeleteService authoritiesDeleteService;
     private final Utils utils;
+
+    /* 특정 회원정보 폼에서 변경시 저장*/
+    public void save(RequestMember form){
+        String email = form.getEmail();
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new AlertException("회원이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        member.setUserName(form.getUserName());
+        member.setMobile(form.getMobile());
+
+        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
+            member.setPassword(form.getPassword());
+        }
+
+        memberRepository.saveAndFlush(member);
+
+    }
 
     public void saveList(List<Integer> chks) {
         if (chks == null || chks.isEmpty()) {
@@ -31,8 +51,6 @@ public class MemberConfigSaveService {
 
             if(member == null) continue;
         }
-
-        //관리자, 회원 권한수정 코드 추가
 
         // 모든 수정된 사항을 데이터베이스에 반영
         memberRepository.flush();
