@@ -3,13 +3,15 @@
 <th:block th:fragment="form" th:object="${requestMember}">
     <div class="error global" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
 
-    <h1>회원 권한 부여</h1>
+    <input type="hidden" name="seq" th:field="*{seq}">
+
+    <h2>회원 권한 부여</h2>
     <div class="mb30">
         <input type="checkbox" name="authorities" value="ADMIN" id="authority_admin" th:field="*{authorities}">
         <label for="authority_admin">관리자</label>
     </div>
 
-    <h1>활동 여부 설정</h1>
+    <h2>활동 여부 설정</h2>
     <div class="mb30">
         <input type="radio" name="activity" id="activity_true" value="true" th:field="*{activity}">
         <label for="activity_true">계정 활동 가능</label>
@@ -17,7 +19,7 @@
         <label for="activity_false">계정 활동 불가능</label>
     </div>
 
-    <h1>회원 정보 설정</h1>
+    <h2>회원 정보 설정</h2>
     <input type="hidden" name="mode" value="edit">
     <input type="hidden" name="seq" th:field="*{seq}">
     <dl class="mb30">
@@ -46,9 +48,8 @@
 
         <dt th:text="#{비밀번호}"></dt>
         <dd>
-            <div>
-                <input type="text" name="password" th:field="*{password}" disabled>
-            </div>
+            <input type="hidden" name="password" th:field="*{password}">
+            <th:block th:text="*{password}"></th:block>
         </dd>
     </dl>
 
