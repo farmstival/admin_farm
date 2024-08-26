@@ -4,12 +4,16 @@ package com.joyfarm.farmstival.member.admin.services;
 import com.joyfarm.farmstival.global.Utils;
 import com.joyfarm.farmstival.global.exceptions.script.AlertException;
 import com.joyfarm.farmstival.member.admin.controllers.RequestMember;
+import com.joyfarm.farmstival.member.constants.Authority;
+import com.joyfarm.farmstival.member.entities.Authorities;
 import com.joyfarm.farmstival.member.entities.Member;
 import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,22 +21,30 @@ import java.util.List;
 public class MemberConfigSaveService {
 
     private final MemberRepository memberRepository;
-    private final AuthoritiesDeleteService authoritiesDeleteService;
     private final Utils utils;
 
     /* 특정 회원정보 폼에서 변경시 저장*/
     public void save(RequestMember form){
-        String email = form.getEmail();
-
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new AlertException("회원이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+        Member member = memberRepository.findByEmail(form.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException(form.getEmail()));
 
         member.setUserName(form.getUserName());
+        member.setEmail(form.getEmail());
         member.setMobile(form.getMobile());
 
-        if (form.getPassword() != null && !form.getPassword().isEmpty()) {
-            member.setPassword(form.getPassword());
+        List<String> strAuthorities = form.getAuthorities();
+
+        List<Authorities> authoList = new ArrayList<>();
+        for(String autho : strAuthorities){
+            Authorities authorities = new Authorities();
+            authorities.setMember(member);
+            authorities.setAuthority(Authority.valueOf(autho));
+
+            authoList.add(authorities);
+
         }
+
+
 
         memberRepository.saveAndFlush(member);
 

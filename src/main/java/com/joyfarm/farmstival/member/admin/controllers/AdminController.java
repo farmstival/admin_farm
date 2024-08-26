@@ -9,7 +9,7 @@ import com.joyfarm.farmstival.member.admin.services.MemberDeleteService;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Member;
-import com.joyfarm.farmstival.member.validators.MemberFormValidator;
+import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
 import jakarta.validation.Valid;
@@ -30,9 +30,9 @@ public class AdminController  {
     private final AllMemberConfigInfoService memberConfigInfoService;
     private final MemberConfigSaveService memberConfigSaveService;
     private final MemberDeleteService memberDeleteService;
-    private final MemberFormValidator memberFormValidator;
 
     private final Utils utils;
+    private final MemberRepository memberRepository;
 
 
     @ModelAttribute("menuCode")
@@ -71,29 +71,28 @@ public class AdminController  {
     }
 
     @GetMapping("/edit/{email}")
-    public String edit(@PathVariable("email") String email, @ModelAttribute RequestMember member, Model model){
+    public String edit(@PathVariable("email") String email, @ModelAttribute RequestMember form, Model model){
         commonProcess("edit", model);
-        member = memberConfigInfoService.getForm(email);
-
-        member.setAuthorities(member.getAuthorities());
-        model.addAttribute("requestMember",member);
+        form = memberConfigInfoService.getForm(email);
+        form.setAuthorities(form.getAuthorities());
+        model.addAttribute("requestMember", form);
         return "member/edit";
     }
 
     @PostMapping("/save")
     public String save(@Valid RequestMember form, Errors errors, Model model){
         String mode = form.getMode();
-
         commonProcess(mode,model);
 //        memberFormValidator.validate(member, errors);
 
         if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach(System.out::println);
-            return "member/mansge";
+            errors.getAllErrors().forEach(System.out::println);
+            return "member/manage" + mode;
         }
 
         memberConfigSaveService.save(form);
-        return "redirect:"+ utils.redirectUrl("/member");
+
+        return "redirect:" + utils.redirectUrl("/member");
 
     }
 

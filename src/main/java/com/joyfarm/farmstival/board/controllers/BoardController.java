@@ -113,7 +113,8 @@ public class BoardController implements ExceptionProcessor {
     public String edit(@PathVariable("bid") String bid, Model model) {
         commonProcess("edit", model);
 
-        RequestBoardConfig form = configInfoService.getForm(bid);
+        RequestBoardConfig form = configInfoService
+                .getForm(bid);
         System.out.println(form);
         model.addAttribute("requestBoardConfig", form);
 
