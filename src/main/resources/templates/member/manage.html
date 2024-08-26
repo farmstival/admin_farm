@@ -37,7 +37,6 @@
                     <input type="checkbox" class="checkall" data-target-name="chk" id="checkall">
                     <label for="checkall"></label>
                 </th>
-                <th>번호</th>
                 <th>이메일</th>
                 <th>회원명</th>
                 <th>전화번호</th>
@@ -56,7 +55,6 @@
                     <input type="checkbox" name="chk" th:value="${status.index}" th:id="${'chk_' + status.index}">
                     <label th:for="${'chk_' + status.index}"></label>
                 </td>
-                <td th:text="*{seq}" align="center"></td>
                 <td th:text="*{email}" align="center"></td>
                 <td th:text="*{userName}" align="center"></td>
                 <td th:text="*{mobile}" align="center"></td>
