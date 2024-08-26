@@ -1,11 +1,17 @@
 package com.joyfarm.farmstival.global;
 
+import com.joyfarm.farmstival.global.exceptions.UnAuthorizedException;
+import com.joyfarm.farmstival.member.entities.JwtToken;
+import com.joyfarm.farmstival.member.repositories.JwtTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -23,9 +29,32 @@ public class Utils { // 빈의 이름 - utils
     private final MessageSource messageSource;
     private final HttpServletRequest request;
     private final DiscoveryClient discoveryClient;
+    private final HttpSession session;
+    private final JwtTokenRepository jwtTokenRepository;
 
-    public String url(String url) {
-        List<ServiceInstance> instances = discoveryClient.getInstances("admin-service");
+    public HttpHeaders getCommonHeaders(String method){
+      JwtToken jwtToken = jwtTokenRepository.findById(session.getId()).orElseThrow(UnAuthorizedException::new);
+//
+//        JwtToken jwtToken = new JwtToken();
+
+//        jwtToken.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMDFAdGVzdC5vcmciLCJleHAiOjE3MjUwMTMyODV9.Z_vs0BYXa0VjtJpVldOdKFAEvYAAsVTt9B8ZiXfdXdQ1gwWgSLDg0riDwZsSsclm8kRtCSUFL3Qm54J302C8JQ");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(jwtToken.getToken());
+        if(!List.of("GET","DELETE").contains(method)){
+            //GET, DELETE 이외 방식은 모두 Body 데이터에 있다.
+            headers.setContentType(MediaType.APPLICATION_JSON);
+        }
+
+        return headers;
+    }
+
+    public String url(String url){
+        return url(url,"admin-service");
+    }
+
+    public String url(String url, String serviceId) {
+        List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
 
         try{
             return String.format("%s%s", instances.get(0).getUri().toString(), url);

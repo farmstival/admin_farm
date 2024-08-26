@@ -2,9 +2,11 @@ package com.joyfarm.farmstival.board.controllers;
 
 
 import com.joyfarm.farmstival.board.entities.Board;
+import com.joyfarm.farmstival.board.entities.BoardData;
 import com.joyfarm.farmstival.board.services.BoardConfigDeleteService;
 import com.joyfarm.farmstival.board.services.BoardConfigInfoService;
 import com.joyfarm.farmstival.board.services.BoardConfigSaveService;
+import com.joyfarm.farmstival.board.services.BoardInfoService;
 import com.joyfarm.farmstival.board.validators.BoardConfigValidator;
 import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
@@ -33,6 +35,8 @@ public class BoardController implements ExceptionProcessor {
     private final BoardConfigDeleteService configDeleteService;
 
     private final BoardConfigValidator configValidator;
+
+    private final BoardInfoService boardInfoService;
     private final Utils utils;
 
     @ModelAttribute("menuCode")
@@ -146,8 +150,12 @@ public class BoardController implements ExceptionProcessor {
      * @return
      */
     @GetMapping("/posts")
-    public String posts(Model model) {
+    public String posts(@ModelAttribute BoardDataSearch search, Model model) {
         commonProcess("posts", model);
+
+        ListData<BoardData> data = boardInfoService.getList(search);
+        model.addAttribute("items",data.getItems());
+        model.addAttribute("pagination", data.getPagination());
 
         return "board/posts";
     }
