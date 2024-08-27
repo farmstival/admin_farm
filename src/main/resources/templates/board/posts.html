@@ -46,7 +46,7 @@
                 <td th:text="*{subject}"></td>
                 <td th:text="*{createdAt}"></td>
                 <td>
-                    <a th:href="${@utils.redirectUrl('/board/posts' + bid)}" class="sbtn">
+                    <a th:href="${@utils.redirectUrl('/board/posts/' + item.seq)}" class="sbtn">
                         <i class="xi-wrench"></i> 관리
                     </a>
                 </td>

@@ -181,6 +181,36 @@ public class BoardController implements ExceptionProcessor {
         return "board/posts";
     }
 
+    @GetMapping("/posts/{seq}")
+    public String editPost(@PathVariable("seq") Long seq, Model model, @ModelAttribute RequestBoard form) {
+
+//        BoardData boardData = boardInfoService.get(seq);
+//        form = boardInfoService.getForm(boardData);
+//        System.out.println(form);
+     //   boardInfoService.get(seq);
+
+        commonProcess("edit", model);
+
+        model.addAttribute("requestBoard", form);
+
+        return "board/post_edit";  // 수정 페이지로 이동
+    }
+
+    @PostMapping("/posts/save")
+    public String save(@Valid RequestBoard form, Errors errors, Model model) {
+        String mode = form.getMode();
+
+        commonProcess(mode, model);
+
+//        configValidator.validate(, errors);
+
+
+        //configSaveService.save(config);
+
+
+        return "redirect:" + utils.redirectUrl("/posts");
+    }
+
     /**
      * 공통 처리
      *
