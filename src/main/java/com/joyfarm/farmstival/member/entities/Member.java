@@ -34,6 +34,6 @@ public class Member extends BaseEntity {
     private String mobile;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Authorities> authorities;
 }

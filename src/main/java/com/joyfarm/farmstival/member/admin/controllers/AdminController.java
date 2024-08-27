@@ -12,6 +12,7 @@ import com.joyfarm.farmstival.member.entities.Member;
 import com.joyfarm.farmstival.member.repositories.MemberRepository;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class AdminController  {
     private final AllMemberConfigInfoService memberConfigInfoService;
     private final MemberConfigSaveService memberConfigSaveService;
     private final MemberDeleteService memberDeleteService;
+    private final HttpServletRequest request;
 
     private final Utils utils;
     private final MemberRepository memberRepository;
@@ -72,6 +74,9 @@ public class AdminController  {
 
     @GetMapping("/edit/{email}")
     public String edit(@PathVariable("email") String email, @ModelAttribute RequestMember form, Model model){
+
+        request.setAttribute("addCss", List.of("editForm"));
+
         commonProcess("edit", model);
         form = memberConfigInfoService.getForm(email);
         form.setAuthorities(form.getAuthorities());

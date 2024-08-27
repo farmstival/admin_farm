@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +25,18 @@ public class MemberConfigSaveService {
     private final Utils utils;
 
     /* 특정 회원정보 폼에서 변경시 저장*/
+    @Transactional
     public void save(RequestMember form){
         Member member = memberRepository.findByEmail(form.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException(form.getEmail()));
 
+        System.out.println("Before save: " + member.getAuthorities());
+
         member.setUserName(form.getUserName());
         member.setEmail(form.getEmail());
         member.setMobile(form.getMobile());
+
+        member.getAuthorities().clear(); //기존 권한 지우고 새로 설정
 
         List<String> strAuthorities = form.getAuthorities();
 
@@ -41,12 +47,12 @@ public class MemberConfigSaveService {
             authorities.setAuthority(Authority.valueOf(autho));
 
             authoList.add(authorities);
-
         }
-
-
+        member.getAuthorities().addAll(authoList);// 새로 생성한 authoList를 member에 설정
 
         memberRepository.saveAndFlush(member);
+
+        System.out.println("After save: " + memberRepository.findByEmail(member.getEmail()).get().getAuthorities());
 
     }
 

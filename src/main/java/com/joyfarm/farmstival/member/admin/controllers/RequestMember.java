@@ -18,6 +18,7 @@ public class RequestMember {
     @NotBlank
     private String email;
     private String password;
+    @NotBlank
     private String mobile;
     private List<String> authorities = new ArrayList<>();
 }

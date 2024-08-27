@@ -28,8 +28,8 @@
         <dt th:text="#{이메일}"></dt>
         <dd>
             <div>
-                <input type="text" name="email" th:field="*{email}">
-                <div class="error" th:each="err : ${#fields.errors('email')}" th:text="${err}"></div>
+                <input type="hidden" name="email" th:field="*{email}">
+                <th:block th:text="*{email}"></th:block>
             </div>
         </dd>
         <dt th:text="#{회원명}"></dt>
@@ -38,7 +38,6 @@
                 <input type="text" name="userName" th:field="*{userName}">
                 <div class="error" th:each="err : ${#fields.errors('userName')}" th:text="${err}"></div>
             </div>
-        </dd>
         </dd>
         <dt th:text="#{전화번호}"></dt>
         <dd>
