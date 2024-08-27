@@ -16,20 +16,21 @@ import java.util.List;
 public class BoardUpdateServiceTest {
 
     @Autowired
-    private BoardUpdateService boardUpdateService;
+    private BoardUpdateService updateService;
 
     @Autowired
     private BoardInfoService infoService;
 
     @Test
-    void test1(){
+    void test1() {
         ListData<BoardData> data = infoService.getList(new BoardDataSearch());
 
-       List<BoardData> items = data.getItems().stream().map(item -> {
-           item.setSubject("(수정)" + item.getSubject());
-           return item;
-       }).toList();
+        List<BoardData> items = data.getItems().stream()
+                .map(item -> {
+                    item.setSubject("(수정)" + item.getSubject());
+                    return item;
+                }).toList();
 
-       boardUpdateService.update("update",data.getItems());
+        updateService.update("update", data.getItems());
     }
 }

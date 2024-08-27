@@ -48,18 +48,27 @@ public class BoardInfoService {
 
         ResponseEntity<JSONData> response = restTemplate.exchange(URI.create(url), HttpMethod.GET, request, JSONData.class);
 
-        if(!response.getStatusCode().is2xxSuccessful() || !response.getBody().isSuccess()){
+        System.out.println("Response Body: " + response.getBody());
+
+        if (!response.getStatusCode().is2xxSuccessful() || !response.getBody().isSuccess()) {
             return new ListData<>();
         }
 
         Object data = response.getBody().getData();
         try {
             return om.readValue(om.writeValueAsString(data), ListData.class);
-        }catch (JsonProcessingException e){
+
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         return new ListData<>();
-
     }
+
+    public ListData<BoardData> getList(String bid, BoardDataSearch search){
+        search.setBid(bid);
+        return getList(search);
+    }
+
+    public ListData<BoardData> getList(String bid){return getList(bid,new BoardDataSearch());}
 }

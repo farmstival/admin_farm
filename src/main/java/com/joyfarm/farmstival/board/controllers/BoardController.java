@@ -152,9 +152,29 @@ public class BoardController implements ExceptionProcessor {
      */
     @GetMapping("/posts")
     public String posts(@ModelAttribute BoardDataSearch search, Model model) {
+
         commonProcess("posts", model);
 
-        ListData<BoardData> data = boardInfoService.getList(search);
+        ListData<BoardData> data;
+
+        if(search.getBid() == null || search.getBid().isEmpty()){
+                data = boardInfoService.getList(search);
+        } else{
+            data = boardInfoService.getList(search.getBid(),search);
+        }
+
+        model.addAttribute("items",data.getItems());
+        model.addAttribute("pagination", data.getPagination());
+
+        return "board/posts";
+    }
+
+    //특정 카테고리 게시글 목록
+    @GetMapping("/{bid}")
+    public String categoryPosts(@PathVariable("bid") String bid, @ModelAttribute  BoardDataSearch search, Model model){
+        commonProcess("posts", model);
+        ListData<BoardData> data = boardInfoService.getList(bid,search);
+
         model.addAttribute("items",data.getItems());
         model.addAttribute("pagination", data.getPagination());
 

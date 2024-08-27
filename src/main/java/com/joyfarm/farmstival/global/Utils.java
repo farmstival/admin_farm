@@ -32,17 +32,17 @@ public class Utils { // 빈의 이름 - utils
     private final HttpSession session;
     private final JwtTokenRepository jwtTokenRepository;
 
-    public HttpHeaders getCommonHeaders(String method){
-      JwtToken jwtToken = jwtTokenRepository.findById(session.getId()).orElseThrow(UnAuthorizedException::new);
-//
-//        JwtToken jwtToken = new JwtToken();
+    public HttpHeaders getCommonHeaders(String method) {
 
-//        jwtToken.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMDFAdGVzdC5vcmciLCJleHAiOjE3MjUwMTMyODV9.Z_vs0BYXa0VjtJpVldOdKFAEvYAAsVTt9B8ZiXfdXdQ1gwWgSLDg0riDwZsSsclm8kRtCSUFL3Qm54J302C8JQ");
-
+        JwtToken jwtToken =  jwtTokenRepository.findById(session.getId()).orElseThrow(UnAuthorizedException::new);
+        /*
+        JwtToken jwtToken = new JwtToken();
+        jwtToken.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMDFAdGVzdC5vcmciLCJleHAiOjE3MjQ2NjQ5NjN9.5OfEnHQhoh7FL6ZTNUjPvRsf5UbaZl4d1W9eO0NfQ_FM1rWq-MJuCx8KWOmilwIhzDeDkTGvobHcTj9aivlbKw");
+        */
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(jwtToken.getToken());
-        if(!List.of("GET","DELETE").contains(method)){
-            //GET, DELETE 이외 방식은 모두 Body 데이터에 있다.
+
+        if (!List.of("GET", "DELETE").contains(method)) { // GET, DELETE 이외 방식은 모두 Body 데이터 있다.
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
 

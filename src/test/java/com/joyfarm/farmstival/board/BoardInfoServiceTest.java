@@ -15,11 +15,9 @@ public class BoardInfoServiceTest {
     private BoardInfoService infoService;
 
     @Test
-    void test1(){
+    void test1() {
         BoardDataSearch search = new BoardDataSearch();
         ListData<BoardData> data = infoService.getList(search);
-
         System.out.println(data);
-
     }
 }
