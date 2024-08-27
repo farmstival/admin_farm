@@ -63,15 +63,15 @@
                     <div th:each="auth : *{authorities}" th:object="${auth}">
                         <input type="radio"
                                th:name="${'authority_' + status.index}"
-                               th:value="*{authority.name}"
-                               th:checked="*{authority.name == 'USER'}"
+                               th:value="USER"
+                               th:checked="${auth.authority.name == 'USER'}"
                                th:id="${'authority_' + status.index + '_USER'}">
                         <label th:for="${'authority_' + status.index + '_USER'}">일반회원</label>
 
                         <input type="radio"
                                th:name="${'authority_' + status.index}"
-                               th:value="*{authority.name}"
-                               th:checked="*{authority.name == 'ADMIN'}"
+                               th:value="ADMIN"
+                               th:checked="${auth.authority.name == 'ADMIN'}"
                                th:id="${'authority_' + status.index + '_ADMIN'}">
                         <label th:for="${'authority_' + status.index + '_ADMIN'}">관리자</label>
                     </div>

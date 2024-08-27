@@ -57,6 +57,7 @@ public class MemberConfigSaveService {
     }
 
     public void saveList(List<Integer> chks) {
+
         if (chks == null || chks.isEmpty()) {
             throw new AlertException("수정할 회원을 선택하세요.", HttpStatus.BAD_REQUEST);
         }
@@ -68,7 +69,30 @@ public class MemberConfigSaveService {
                     .orElseThrow(() -> new AlertException("해당 이메일의 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
             if(member == null) continue;
+            System.out.println("Before save: " + member.getAuthorities());
+
+            String strAuthority = utils.getParam("authority_" + chk); // 수정된 부분
+
+            if (strAuthority == null || strAuthority.isEmpty()) {
+                throw new AlertException("권한 값이 제공되지 않았습니다.", HttpStatus.BAD_REQUEST);
+            }
+
+            try {
+                Authority authority = Authority.valueOf(strAuthority);
+                Authorities authorities = new Authorities();
+                authorities.setMember(member);
+                authorities.setAuthority(authority);
+
+                member.getAuthorities().clear(); // 기존 권한 제거
+                member.getAuthorities().add(authorities);
+
+                memberRepository.saveAndFlush(member);
+                System.out.println("After save: " + memberRepository.findByEmail(member.getEmail()).get().getAuthorities());
+            } catch (IllegalArgumentException e) {
+                throw new AlertException("유효하지 않은 권한 값입니다.", HttpStatus.BAD_REQUEST);
+            }
         }
+
 
         // 모든 수정된 사항을 데이터베이스에 반영
         memberRepository.flush();
