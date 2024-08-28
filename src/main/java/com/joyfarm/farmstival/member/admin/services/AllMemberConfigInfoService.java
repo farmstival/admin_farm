@@ -199,7 +199,7 @@ public class AllMemberConfigInfoService implements UserDetailsService {
 
         RequestMember form = new ModelMapper().map(member, RequestMember.class);
 
-        List<String> authorities = member.getAuthorities().stream().map(a -> a.getAuthority().name()).toList();
+        List<String>  authorities = member.getAuthorities().stream().map(a -> a.getAuthority().name()).toList();
         form.setAuthorities(authorities);
         form.setMode("edit");
         form.setActivity(true);

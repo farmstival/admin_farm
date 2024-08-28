@@ -1,5 +1,6 @@
 package com.joyfarm.farmstival.file.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joyfarm.farmstival.global.entities.BaseMemberEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FileInfo extends BaseMemberEntity {
 
     @Id

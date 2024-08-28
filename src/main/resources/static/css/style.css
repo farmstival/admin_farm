@@ -46,7 +46,7 @@ nav.submenus a.on { background: #333333; color: #fff; font-weight: 500; }
 
 /* 제목 공통 S */
 h1 { margin: 0; padding: 0 0 20px 10px; line-height: 1; font-size: 2rem; border-bottom: 2px solid #222; margin-bottom: 30px; }
-h2 { margin: 0 0 10px 0; font-size: 1.385rem; line-height: 1; }
+h2 { margin: 0 0 10px 0; font-size: 1.75rem; line-height: 1; }
 /* 제목 공통 E */
 
 /* 테이블 공통 S */
@@ -199,3 +199,29 @@ ac { text-align: center !important; }
     grid-row: 2 / 3;
 }
 /* 대시보드 레이아웃 */
+
+/* 게시글 관리 */
+.tab-menu {
+    margin-top: 60px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    color: #FFF;
+}
+
+.tab-menu a {
+    background-color: #333333;
+    font-weight: bold;
+    margin-right: 10px;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #FFF;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-menu a:hover {
+    background-color: #2A4840;
+    color: white;
+}
