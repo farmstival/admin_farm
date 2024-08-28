@@ -3,10 +3,7 @@ package com.joyfarm.farmstival.board.controllers;
 
 import com.joyfarm.farmstival.board.entities.Board;
 import com.joyfarm.farmstival.board.entities.BoardData;
-import com.joyfarm.farmstival.board.services.BoardConfigDeleteService;
-import com.joyfarm.farmstival.board.services.BoardConfigInfoService;
-import com.joyfarm.farmstival.board.services.BoardConfigSaveService;
-import com.joyfarm.farmstival.board.services.BoardInfoService;
+import com.joyfarm.farmstival.board.services.*;
 import com.joyfarm.farmstival.board.validators.BoardConfigValidator;
 import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Pagination;
@@ -37,6 +34,7 @@ public class BoardController implements ExceptionProcessor {
     private final BoardConfigValidator configValidator;
 
     private final BoardInfoService boardInfoService;
+    private final BoardUpdateService boardUpdateService;
     private final Utils utils;
 
     @ModelAttribute("menuCode")
@@ -113,9 +111,8 @@ public class BoardController implements ExceptionProcessor {
     public String edit(@PathVariable("bid") String bid, Model model) {
         commonProcess("edit", model);
 
-        RequestBoardConfig form = configInfoService
-                .getForm(bid);
-        System.out.println(form);
+        RequestBoardConfig form = configInfoService.getForm(bid);
+
         model.addAttribute("requestBoardConfig", form);
 
         return "board/edit";
@@ -133,11 +130,6 @@ public class BoardController implements ExceptionProcessor {
         commonProcess(mode, model);
 
         configValidator.validate(config, errors);
-
-        if (errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach(System.out::println);
-            return "board/" + mode;
-        }
 
         configSaveService.save(config);
 
@@ -184,13 +176,12 @@ public class BoardController implements ExceptionProcessor {
     @GetMapping("/posts/{seq}")
     public String editPost(@PathVariable("seq") Long seq, Model model, @ModelAttribute RequestBoard form) {
 
-//        BoardData boardData = boardInfoService.get(seq);
-//        form = boardInfoService.getForm(boardData);
-//        System.out.println(form);
-     //   boardInfoService.get(seq);
-
         commonProcess("edit", model);
 
+        form = boardInfoService.getForm(seq);
+
+//        BoardData boardData = boardInfoService.get(seq);
+//        model.addAttribute("board", boardData.getBoard());
         model.addAttribute("requestBoard", form);
 
         return "board/post_edit";  // 수정 페이지로 이동
@@ -202,13 +193,13 @@ public class BoardController implements ExceptionProcessor {
 
         commonProcess(mode, model);
 
-//        configValidator.validate(, errors);
+        boolean isSaved = boardUpdateService.updateSave(mode,form);
 
-
-        //configSaveService.save(config);
-
-
-        return "redirect:" + utils.redirectUrl("/posts");
+        if(isSaved){
+            return "redirect:" + utils.redirectUrl("/posts");
+        }else {
+            return "redirect:/board/edit?seq=" + form.getSeq(); // 다시 수정 페이지로 이동
+        }
     }
 
     /**

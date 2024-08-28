@@ -3,8 +3,8 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/main}">
 <section layout:fragment="content">
-    <h1>게시판 수정</h1>
-    <form name="frmSave" method="post" th:action="${@utils.redirectUrl('/board/posts/save')}" autocomplete="off" class="editForm">
+    <h1>게시글 수정</h1>
+    <form name="frmSave" method="post" th:action="${@utils.redirectUrl('/board/posts/save')}" autocomplete="off" class="editForm" th:object="${requestBoard}">
         <input type="hidden" name="mode" value="edit">
 
         <th:block th:replace="~{board/_postform::form}"></th:block>

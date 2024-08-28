@@ -26,8 +26,9 @@ public class BoardUpdateService {
     private final ObjectMapper om;
     private final Utils utils;
 
+    //목록수정  updatelist
     public void update(String mode, List<BoardData> items) {
-        mode = StringUtils.hasText(mode) ? mode : "update";
+        mode = StringUtils.hasText(mode) ? mode : "edit";
 
         String url = utils.url("/board/admin/" + mode, "api-service");
         Map<String, List<BoardData>> params = new HashMap<>();
@@ -47,8 +48,27 @@ public class BoardUpdateService {
         }
     }
 
-    public void update(String mode, RequestBoard form) {
-        mode = StringUtils.hasText(mode) ? mode : mode;
+    //게시물 개별 수정
+    public boolean updateSave(String mode, RequestBoard form) {
+        mode = StringUtils.hasText(mode) ? mode : "edit";
+
+        String url = utils.url("/board/admin/edit/" + form.getSeq(), "api-service");
+
+        try{
+            String jsonBody = om.writeValueAsString(form);
+            HttpHeaders headers = utils.getCommonHeaders("POST");
+            HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(URI.create(url), HttpMethod.POST, request, String.class);
+
+            System.out.println(response);
+
+            return response.getStatusCode().is2xxSuccessful();
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 }

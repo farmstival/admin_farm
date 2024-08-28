@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class BoardDataSearch extends CommonSearch {
 
-    private int limit; //설정쪽 값에 따라 대체되야함
+    private int limit=15; //설정쪽 값에 따라 대체되야함
 
     private String bid; //게시판 ID
     private List<String> bids; //게시판 ID 여러개(통합검색)

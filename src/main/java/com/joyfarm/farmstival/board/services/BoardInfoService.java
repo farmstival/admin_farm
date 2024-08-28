@@ -11,7 +11,6 @@ import com.joyfarm.farmstival.global.ListData;
 import com.joyfarm.farmstival.global.Utils;
 import com.joyfarm.farmstival.global.rests.JSONData;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,7 +33,7 @@ public class BoardInfoService {
 
 
     public BoardData get(Long seq){
-        String url = utils.url("/board/admin/" + seq, "api-service");
+        String url = utils.url("/board/admin/edit/" + seq, "api-service");
 
         HttpHeaders headers = utils.getCommonHeaders("GET");
 
@@ -57,11 +56,41 @@ public class BoardInfoService {
         return new BoardData();
     }
 
-    public RequestBoard getForm(BoardData data){
-        RequestBoard form = new ModelMapper().map(data, RequestBoard.class);
-        form.setMode("update");
-        return form;
+    public RequestBoard getForm(Long seq){
+        BoardData boardData = get(seq);
+        if(boardData == null || boardData.getSeq() == null){
+            return new RequestBoard();
+        }
+
+        RequestBoard form = new RequestBoard();
+        form.setSeq(boardData.getSeq());
+        form.setBid(boardData.getBoard() != null ? boardData.getBoard().getBid() : null);
+        form.setGid(boardData.getGid());
+        form.setNotice(boardData.isNotice());
+        form.setCategory(boardData.getCategory());
+        form.setPoster(boardData.getPoster());
+        form.setSubject(boardData.getSubject());
+        form.setContent(boardData.getContent());
+        form.setGuestPw(boardData.getGuestPw());
+
+        form.setNum1(boardData.getNum1());
+        form.setNum2(boardData.getNum2());
+        form.setNum3(boardData.getNum3());
+
+        form.setText1(boardData.getText1());
+        form.setText2(boardData.getText2());
+        form.setText3(boardData.getText3());
+
+        form.setLongText1(boardData.getLongText1());
+        form.setLongText2(boardData.getLongText2());
+
+        addBoardData(boardData);
+        form.setEditorImages(boardData.getEditorImages());
+        form.setAttachFiles(boardData.getAttachFiles());
+
+        return  form;
     }
+
 
     public ListData<BoardData> getList(BoardDataSearch search) {
         String url = utils.url("/board/admin", "api-service");
