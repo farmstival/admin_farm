@@ -10,8 +10,9 @@
         <th:block th:replace="~{board/_postform::form}"></th:block>
 
         <div class="submit_btns">
-            <button type="reset" class="btn">다시입력</button>
-            <button type="submit" class="btn">수정하기</button>
+            <button type="button" class="btn" onclick="window.location.href='/board/posts';">뒤로가기</button>
+            <a href="#" class="btn" th:href="@{http://localhost:4000/board/update/{seq}(seq=${seq})}">수정하러 가기</a>
+
         </div>
     </form>
 </section>
