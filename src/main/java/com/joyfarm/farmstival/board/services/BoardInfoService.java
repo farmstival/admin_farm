@@ -56,11 +56,16 @@ public class BoardInfoService {
         return new BoardData();
     }
 
-    public RequestBoard getForm(Long seq){
+    public RequestBoard getForm(Long seq) {
         BoardData boardData = get(seq);
         if(boardData == null || boardData.getSeq() == null){
             return new RequestBoard();
         }
+        return getForm(boardData);
+    }
+
+    public RequestBoard getForm(BoardData boardData){
+
 
         RequestBoard form = new RequestBoard();
         form.setSeq(boardData.getSeq());
