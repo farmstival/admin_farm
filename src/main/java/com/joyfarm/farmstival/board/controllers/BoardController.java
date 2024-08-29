@@ -37,6 +37,8 @@ public class BoardController implements ExceptionProcessor {
     private final BoardUpdateService boardUpdateService;
     private final Utils utils;
 
+    private BoardData boardData;
+
     @ModelAttribute("menuCode")
     public String getMenuCode() { // 주 메뉴 코드
         return "board";
@@ -176,9 +178,9 @@ public class BoardController implements ExceptionProcessor {
     @GetMapping("/posts/{seq}")
     public String editPost(@PathVariable("seq") Long seq, Model model, @ModelAttribute RequestBoard form) {
 
-        commonProcess("edit", model);
+        commonProcess(seq, "edit", model);
 
-        form = boardInfoService.getForm(seq);
+        form = boardInfoService.getForm(boardData);
 
 //        BoardData boardData = boardInfoService.get(seq);
 //        model.addAttribute("board", boardData.getBoard());
@@ -200,6 +202,15 @@ public class BoardController implements ExceptionProcessor {
         }else {
             return "redirect:/board/edit?seq=" + form.getSeq(); // 다시 수정 페이지로 이동
         }
+    }
+
+    private void commonProcess(Long seq, String mode, Model model) {
+        boardData = boardInfoService.get(seq);
+
+        commonProcess(mode, model);
+
+        model.addAttribute("boardData", boardData);
+        model.addAttribute("board", boardData.getBoard());
     }
 
     /**
