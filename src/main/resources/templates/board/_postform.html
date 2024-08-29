@@ -8,7 +8,6 @@
     <input type="hidden" name="gid" th:field="*{gid}">
     <input type="hidden" name="bid" th:field="*{bid}">
     <input type="hidden" name="seq" th:field="*{seq}">
-
     <h2>게시글 상세</h2>
     <table class="table_cols mb30">
         <tr>
@@ -33,7 +32,7 @@
 
                 <div class="form-group">
                     <label>내용</label>
-                    <textarea name="content" id="content" th:field="*{content}" th:utext="${requestBoard.content}"></textarea>
+                    <textarea name="content" id="content" th:field="*{content}" th:utext="${requestBoard.content}" th:classappend="${!boardData.editorView} ? 'no-editor'"></textarea>
                 </div>
             <!--이미지, 파일 업로드 추가해야함-->
         </tr>

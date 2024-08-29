@@ -1,11 +1,15 @@
 window.addEventListener("DOMContentLoaded", function() {
-    (async() => {
-        try {
-            const { editorLoad } = commonLib;
-            const editor = await editorLoad("content");
-            if (editor) window.editor = editor;
-        } catch (err) {}
-    })();
+    const el = document.getElementById("content");
+    //if (!el.classList.contains("no-editor")) {
+        (async () => {
+            try {
+                const {editorLoad} = commonLib;
+                const editor = await editorLoad("content");
+                if (editor) window.editor = editor;
+            } catch (err) {
+            }
+        })();
+    //}
 
     /* 이미지 본문 추가 이벤트 처리 S */
     const insertEditors = document.getElementsByClassName("insert-editor");
