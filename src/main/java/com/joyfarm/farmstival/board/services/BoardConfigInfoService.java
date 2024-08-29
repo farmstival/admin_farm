@@ -89,7 +89,7 @@ public class BoardConfigInfoService {
     public ListData<Board> getList(BoardSearch search, boolean isAll) {
         int page = Math.max(search.getPage(), 1); // 페이지 번호(1 이하일 경우 1로 설정)
         int limit = search.getLimit(); //페이지 당 항목 수
-        limit = limit < 1 ? 10 : limit; //항목 수가 1 미만일경우 기본값 20으로 설정, 한페이지에 20개 항목
+        limit = limit < 1 ? 10 : limit; //항목 수가 1 미만일경우 기본값 10으로 설정, 한페이지에 10개 항목
         QBoard board = QBoard.board;
         BooleanBuilder andBuilder = new BooleanBuilder(); //andBuilder -> 데이터베이스 쿼리의 WHERE절에 AND 연산자
 
