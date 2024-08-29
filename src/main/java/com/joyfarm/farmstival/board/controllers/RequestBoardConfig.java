@@ -26,7 +26,7 @@ public class RequestBoardConfig {
 
     private boolean active; // 사용 여부
 
-    private int rowsPerPage = 20; // 1페이지 게시글 수
+    private int rowsPerPage = 15; // 1페이지 게시글 수
 
     private int pageCountPc = 10; // PC 페이지 구간 갯수
 

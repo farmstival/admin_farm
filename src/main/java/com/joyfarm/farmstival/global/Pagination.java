@@ -1,7 +1,10 @@
 package com.joyfarm.farmstival.global;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Data
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Pagination {
 
     private int page;
@@ -38,7 +43,7 @@ public class Pagination {
         page = Math.max(page, 1);
         total = Math.max(total, 0);
         ranges = ranges < 1 ? 10 : ranges;
-        limit = limit < 1 ? 20 : limit; //페이지 당 레코드 개수
+        limit = limit < 1 ? 15 : limit;
 
         // 전체 페이지 갯수
         int totalPages = (int)Math.ceil(total / (double)limit);
@@ -100,6 +105,7 @@ public class Pagination {
         this(page, total, ranges, limit, null);
     }
 
+    @JsonIgnore
     public List<String[]> getPages() {
         // 0 : 페이지 번호, 1 : 페이지 URL - ?page=페이지번호
 

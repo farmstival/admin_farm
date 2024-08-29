@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class BoardSearch { //게시판 목록을 검색하기 위한 조건을 담고있는 객체
     private int page = 1;
-    private int limit = 20;
+    private int limit = 15;
 
     private String bid;
     private List<String> bids;
