@@ -11,6 +11,7 @@ import com.joyfarm.farmstival.global.Utils;
 import com.joyfarm.farmstival.global.exceptions.ExceptionProcessor;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,7 @@ public class BoardController implements ExceptionProcessor {
     private final Utils utils;
 
     private BoardData boardData;
+    private final HttpServletRequest request;
 
     @ModelAttribute("menuCode")
     public String getMenuCode() { // 주 메뉴 코드
@@ -166,7 +168,9 @@ public class BoardController implements ExceptionProcessor {
     //특정 카테고리 게시글 목록
     @GetMapping("/{bid}")
     public String categoryPosts(@PathVariable("bid") String bid, @ModelAttribute  BoardDataSearch search, Model model){
+
         commonProcess("posts", model);
+
         ListData<BoardData> data = boardInfoService.getList(bid,search);
 
         model.addAttribute("items",data.getItems());
@@ -180,7 +184,11 @@ public class BoardController implements ExceptionProcessor {
 
         commonProcess(seq, "edit", model);
 
+        request.setAttribute("addCss", List.of("editForm"));
+
         form = boardInfoService.getForm(boardData);
+
+        commonProcess("posts", model);
 
 //        BoardData boardData = boardInfoService.get(seq);
 //        model.addAttribute("board", boardData.getBoard());
@@ -189,6 +197,7 @@ public class BoardController implements ExceptionProcessor {
         return "board/post_edit";  // 수정 페이지로 이동
     }
 
+    //수정동작 x
     @PostMapping("/posts/save")
     public String save(@Valid RequestBoard form, Errors errors, Model model) {
         String mode = form.getMode();
@@ -236,7 +245,7 @@ public class BoardController implements ExceptionProcessor {
 
         List<String> addScript = new ArrayList<>();
 
-        if (mode.equals("add") || mode.equals("edit")) { // 게시판 등록 또는 수정
+        if (mode.equals("add") || mode.equals("edit") || mode.equals("posts")) { // 게시판 등록 또는 수정
             //에디터 편집기, 파일 관리 기능
             addScript.add("ckeditor5/ckeditor");
             addScript.add("fileManager");
