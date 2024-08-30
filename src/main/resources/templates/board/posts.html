@@ -20,9 +20,9 @@
         <table class="table_rows">
             <thead>
             <tr>
-                <th>
-                    <input type="checkbox" class="checkall" data-target-name="chk">
-                </th>
+<!--                <th>-->
+<!--                    <input type="checkbox" class="checkall" data-target-name="chk">-->
+<!--                </th>-->
                 <th>게시글번호</th>
                 <th>작성자</th>
                 <th>제목</th>
@@ -35,9 +35,9 @@
                 <td class="no-data" colspan="6">조회된 게시글이 없습니다.</td>
             </tr>
             <tr th:unless="${items == null || items.isEmpty()}" th:each="item, status : ${items}" th:object="${item}">
-                <td>
-                    <input type="checkbox" name="chk" th:value="${status.index}">
-                </td>
+<!--                <td>-->
+<!--                    <input type="checkbox" name="chk" th:value="${status.index}">-->
+<!--                </td>-->
                 <td th:text="*{seq}"></td>
                 <td>
                     <th:block th:text="*{poster}"></th:block>
@@ -53,9 +53,9 @@
             </tr>
             </tbody>
         </table>
-        <div class="table_actions"><!--common.js에서 양식 공통 처리함-->
-            <button type="button" class="sbtn form_action" data-mode="delete" data-form-name="frmList">선택 게시물 삭제</button>
-        </div>
+<!--        <div class="table_actions">&lt;!&ndash;common.js에서 양식 공통 처리함&ndash;&gt;-->
+<!--            <button type="button" class="sbtn form_action" data-mode="delete" data-form-name="frmList">선택 게시물 삭제</button>-->
+<!--        </div>-->
     </form>
 
     <th:block th:replace="~{common/_pagination::pagination}"></th:block>
