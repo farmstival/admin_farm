@@ -9,7 +9,7 @@ import com.joyfarm.farmstival.member.admin.services.MemberDeleteService;
 import com.joyfarm.farmstival.member.constants.Authority;
 import com.joyfarm.farmstival.member.controllers.MemberSearch;
 import com.joyfarm.farmstival.member.entities.Member;
-import com.joyfarm.farmstival.member.repositories.MemberRepository;
+import com.joyfarm.farmstival.member.validators.MemberFormValidator;
 import com.joyfarm.farmstival.menus.Menu;
 import com.joyfarm.farmstival.menus.MenuDetail;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,9 +32,8 @@ public class AdminController  {
     private final MemberConfigSaveService memberConfigSaveService;
     private final MemberDeleteService memberDeleteService;
     private final HttpServletRequest request;
-
+    private final MemberFormValidator memberFormValidator;
     private final Utils utils;
-    private final MemberRepository memberRepository;
 
 
     @ModelAttribute("menuCode")
@@ -85,14 +84,15 @@ public class AdminController  {
     }
 
     @PostMapping("/save")
-    public String save(@Valid RequestMember form, Errors errors, Model model){
+    public String save(@Valid @ModelAttribute RequestMember form, Errors errors, Model model){
         String mode = form.getMode();
         commonProcess(mode,model);
-//        memberFormValidator.validate(member, errors);
 
-        if (errors.hasErrors()) {
-            errors.getAllErrors().forEach(System.out::println);
-            return "member/manage" + mode;
+        memberFormValidator.validate(form,errors);
+
+        if(errors.hasErrors()){
+            request.setAttribute("addCss", List.of("editForm"));
+            return "member/edit";
         }
 
         memberConfigSaveService.save(form);

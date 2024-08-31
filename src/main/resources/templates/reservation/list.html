@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<section layout:fragment="content">
+    <h1>예약관리</h1>
+
+    <form name="frmSearch" method="GET" autocomplete="off" th:object="${reservationSearch}">
+        <table class="table_cols">
+            <tr>
+                <th width="120">예약일</th>
+                <td width="350">
+                    <input type="date" name="sDate" th:field="*{sDate}"> ~
+                    <input type="date" name="eDate" th:field="*{eDate}">
+                </td>
+                <th width="120">예약상태</th>
+                <td>
+                    <select name="status" th:field="*{status}">
+                        <option value="ALL">전체</option>
+                        <option value="APPLY">예약확정</option>
+                        <option value="CANCEL">예약취소</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>키워드검색</th>
+                <td colspan="3">
+                    <div class="input_grp">
+                        <select name="sopt" th:field="*{sopt}">
+                            <option value="ALL">통합검색</option>
+                            <option value="ACTIVITY">체험활동</option>
+                            <option value="ADDRESS">주소</option>
+                        </select>
+                        <input type="text" name="skey" th:field="*{skey}">
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="search_btn">
+            <button type="submit" class="btn">검색하기</button>
+        </div>
+    </form>
+
+    <form name="frmList" method="POST" th:action="${@utils.redirectUrl('/reservation')}" target="ifrmHidden">
+        <input type="hidden" name="_method" value="PATCH">
+        <table class="table_rows">
+            <thead>
+            <tr>
+                <th width="40">
+                    <input type="checkbox" class="checkall" data-target-name="seq">
+                </th>
+                <th width="100">예약상태</th>
+                <th width="350">예약정보</th>
+                <th>체험마을정보</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${items == null || items.isEmpty()}">
+                <td colspan="4">조회된 예약이 없습니다.</td>
+            </tr>
+            <tr th:each="item : ${items}" th:object="${item}">
+                <td>
+                    <input type="checkbox" name="seq" th:value="*{seq}">
+                </td>
+                <td th:text="*{status != null ? status.title : ''}"></td>
+                <td>
+                    <dl>
+                        <dt>예약일시</dt>
+                        <dd>
+                            <th:block th:text="*{#temporals.format(rDate, 'yyyy.MM.dd')}"></th:block>
+                            <th:block th:text="*{ampm.title}"></th:block>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>예약자명</dt>
+                        <dd>
+                            <th:block th:text="*{name}"></th:block>
+                            <th:block th:if="*{member != null}" th:text="*{'(' + member.email + ')'}"></th:block>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>예약자 이메일</dt>
+                        <dd th:text="*{email}"></dd>
+                    </dl>
+                    <dl>
+                        <dt>예약자 전화번호</dt>
+                        <dd th:text="*{mobile}"></dd>
+                    </dl>
+                </td>
+                <td>
+                    <dl>
+                        <dt>체험마을명</dt>
+                        <dd th:text="*{townName}"></dd>
+                    </dl>
+                    <dl>
+                        <dt>체험프로그램명</dt>
+                        <dd style="word-break: break-all; width: 400px;" th:text="*{activityName}"></dd>
+                    </dl>
+                    <dl>
+                        <dt>주소</dt>
+                        <dd th:text="*{doroAddress}"></dd>
+                    </dl>
+                    <dl>
+                        <dt>대표자명</dt>
+                        <dd th:text="*{ownerName}"></dd>
+                    </dl>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="table_actions">
+            선택한 예약을
+            <select name="status">
+                <option value="APPLY">예약확인</option>
+                <option value="CANCEL">예약취소</option>
+            </select>로
+            <button type="submit" class="sbtn" onclick="return confirm('정말 변경하겠습니까?');">변경하기</button>
+        </div>
+    </form>
+
+    <th:block th:replace="~{common/_pagination::pagination}"></th:block>
+</section>
+</html>

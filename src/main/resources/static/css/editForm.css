@@ -99,3 +99,8 @@ label {
         width: calc(100% - 10px);
     }
 }
+
+.sub {
+    font-size: 1.4rem !important;
+    color: black;
+}
